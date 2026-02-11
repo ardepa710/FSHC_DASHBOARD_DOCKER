@@ -2,7 +2,8 @@ import { useEffect, useRef, useState, useCallback, createContext, useContext } f
 import { useQueryClient } from '@tanstack/react-query';
 import useStore from '../store/useStore';
 
-const WS_URL = `ws://${window.location.hostname}:3001/ws`;
+// Use same host for WebSocket (nginx proxies to backend)
+const WS_URL = `${window.location.protocol === 'https:' ? 'wss:' : 'ws:'}//${window.location.host}/ws`;
 
 const WebSocketContext = createContext(null);
 
