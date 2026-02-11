@@ -14,11 +14,13 @@ async function main() {
   await prisma.project.deleteMany();
   await prisma.user.deleteMany();
 
-  // Create Admin User
-  const hashedPassword = await bcrypt.hash('7237', 10);
+  // Create Admin User (from environment variables or defaults)
+  const adminUsername = process.env.ADMIN_USER || 'admin';
+  const adminPassword = process.env.ADMIN_PASSWORD || '7237';
+  const hashedPassword = await bcrypt.hash(adminPassword, 10);
   const adminUser = await prisma.user.create({
     data: {
-      username: 'admin',
+      username: adminUsername,
       password: hashedPassword,
       name: 'Administrator',
       email: 'admin@fshc.com',
@@ -408,7 +410,7 @@ async function main() {
   });
 
   console.log('Seed completed successfully!');
-  console.log('Admin user created: username=admin, password=7237');
+  console.log(`Admin user created: username=${adminUsername}, password=${adminPassword}`);
 }
 
 main()
