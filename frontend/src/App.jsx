@@ -9,6 +9,7 @@ import CalendarView from './components/CalendarView';
 import GanttView from './components/GanttView';
 import MyTasksView from './components/MyTasksView';
 import ReportsView from './components/ReportsView';
+import DashboardView from './components/DashboardView';
 import TaskDetail from './components/TaskDetail';
 import TaskModal from './components/TaskModal';
 import LoginPage from './components/LoginPage';
@@ -23,6 +24,10 @@ import ExportImportModal from './components/ExportImportModal';
 import TemplatesPanel from './components/TemplatesPanel';
 import SettingsPanel from './components/SettingsPanel';
 import RecurringTaskConfig from './components/RecurringTaskConfig';
+import MobileNav from './components/MobileNav';
+import GlobalSearch from './components/GlobalSearch';
+import PermissionsPanel from './components/PermissionsPanel';
+import { WebSocketProvider } from './hooks/useWebSocket';
 import useStore from './store/useStore';
 
 function Dashboard() {
@@ -44,13 +49,18 @@ function Dashboard() {
     closeSettingsPanel,
     isRecurringPanelOpen,
     closeRecurringPanel,
+    isGlobalSearchOpen,
+    openGlobalSearch,
+    closeGlobalSearch,
+    isPermissionsPanelOpen,
+    closePermissionsPanel,
   } = useStore();
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
   // Use keyboard shortcuts hook
   useKeyboardShortcuts();
 
-  // Legacy keyboard shortcuts for sidebar
+  // Keyboard shortcuts for sidebar and global search
   useEffect(() => {
     const handleKeyDown = (e) => {
       if (e.key === 'Escape') {
@@ -58,12 +68,12 @@ function Dashboard() {
       }
       if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
         e.preventDefault();
-        document.querySelector('[data-search-input]')?.focus();
+        openGlobalSearch();
       }
     };
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, []);
+  }, [openGlobalSearch]);
 
   // Close sidebar on route change (mobile)
   useEffect(() => {
@@ -71,7 +81,7 @@ function Dashboard() {
   }, [currentView]);
 
   return (
-    <div className="flex h-screen w-full bg-[#0a0f1c]">
+    <div className="flex h-screen w-full bg-[var(--bg0)]">
       {/* Mobile sidebar overlay */}
       {sidebarOpen && (
         <div
@@ -89,7 +99,7 @@ function Dashboard() {
       </div>
 
       {/* Main content */}
-      <main className="flex-1 flex flex-col overflow-hidden min-w-0">
+      <main className="flex-1 flex flex-col overflow-hidden min-w-0 pb-16 lg:pb-0">
         <TopBar onMenuClick={() => setSidebarOpen(true)} />
         <div className="flex-1 overflow-hidden">
           {currentView === 'list' && <ListView />}
@@ -99,8 +109,12 @@ function Dashboard() {
           {currentView === 'gantt' && <GanttView />}
           {currentView === 'myTasks' && <MyTasksView />}
           {currentView === 'reports' && <ReportsView />}
+          {currentView === 'dashboard' && <DashboardView />}
         </div>
       </main>
+
+      {/* Mobile bottom navigation */}
+      <MobileNav onMenuClick={() => setSidebarOpen(true)} />
 
       <TaskDetail />
       <TaskModal
@@ -116,6 +130,8 @@ function Dashboard() {
       <TemplatesPanel isOpen={isTemplatesPanelOpen} onClose={closeTemplatesPanel} />
       <SettingsPanel isOpen={isSettingsPanelOpen} onClose={closeSettingsPanel} />
       <RecurringTaskConfig isOpen={isRecurringPanelOpen} onClose={closeRecurringPanel} />
+      <GlobalSearch isOpen={isGlobalSearchOpen} onClose={closeGlobalSearch} />
+      <PermissionsPanel isOpen={isPermissionsPanelOpen} onClose={closePermissionsPanel} />
     </div>
   );
 }
@@ -139,8 +155,12 @@ function AppContent() {
     return <ProjectSelector onManageUsers={() => setShowUserManagement(true)} />;
   }
 
-  // Show dashboard
-  return <Dashboard />;
+  // Show dashboard with WebSocket
+  return (
+    <WebSocketProvider>
+      <Dashboard />
+    </WebSocketProvider>
+  );
 }
 
 function App() {

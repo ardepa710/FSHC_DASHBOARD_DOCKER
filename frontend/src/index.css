@@ -121,3 +121,62 @@ body {
 ::-webkit-scrollbar-thumb:hover {
   background: var(--text3);
 }
+
+/* Mobile responsive utilities */
+@media (max-width: 640px) {
+  /* Improve touch targets */
+  button,
+  [role="button"],
+  input,
+  select,
+  textarea {
+    min-height: 44px;
+    touch-action: manipulation;
+  }
+
+  /* Full-width modals on mobile */
+  .fixed.top-1\/2.left-1\/2 {
+    width: calc(100% - 1rem) !important;
+    max-width: none !important;
+    max-height: calc(100vh - 2rem) !important;
+  }
+
+  /* Smaller text on mobile */
+  .text-\[16px\] { font-size: 14px !important; }
+  .text-\[15px\] { font-size: 13px !important; }
+  .text-\[14px\] { font-size: 12px !important; }
+
+  /* Better spacing */
+  .p-4 { padding: 0.75rem !important; }
+  .p-6 { padding: 1rem !important; }
+  .gap-4 { gap: 0.75rem !important; }
+  .gap-6 { gap: 1rem !important; }
+
+  /* Hide on mobile */
+  .mobile-hidden { display: none !important; }
+}
+
+/* Tablet adjustments */
+@media (min-width: 641px) and (max-width: 1024px) {
+  .tablet-compact .p-4 { padding: 0.875rem; }
+}
+
+/* Safe area insets for notched devices */
+@supports (padding-bottom: env(safe-area-inset-bottom)) {
+  body {
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+}
+
+/* Prevent pull-to-refresh in app */
+html, body {
+  overscroll-behavior-y: contain;
+}
+
+/* Better focus states for touch */
+@media (hover: none) and (pointer: coarse) {
+  button:active,
+  [role="button"]:active {
+    opacity: 0.7;
+  }
+}

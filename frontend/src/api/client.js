@@ -212,4 +212,11 @@ export const updateTheme = (theme) => client.patch('/settings/theme', { theme })
 export const toggleKeyboardShortcuts = () => client.patch('/settings/keyboard-shortcuts');
 export const updateEmailSettings = (data) => client.patch('/settings/email-notifications', data);
 
+// ============ PERMISSIONS ============
+export const getMyPermissions = (projectId) => client.get(`/permissions/project/${projectId}/me`);
+export const getUserPermissions = (projectId, userId) => client.get(`/permissions/project/${projectId}/user/${userId}`);
+export const getAllProjectPermissions = (projectId) => client.get(`/permissions/project/${projectId}/all`);
+export const updateUserPermissions = (projectId, userId, data) => client.put(`/permissions/project/${projectId}/user/${userId}`, data);
+export const resetUserPermissions = (projectId, userId) => client.delete(`/permissions/project/${projectId}/user/${userId}`);
+
 export default client;

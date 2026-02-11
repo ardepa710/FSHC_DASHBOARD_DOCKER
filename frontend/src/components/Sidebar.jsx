@@ -16,6 +16,8 @@ import {
   Download,
   Settings,
   Keyboard,
+  LayoutDashboard,
+  Shield,
 } from 'lucide-react';
 import useStore from '../store/useStore';
 import { usePhases, useProjectStats } from '../hooks/useData';
@@ -37,12 +39,14 @@ export default function Sidebar({ onClose }) {
     openSettingsPanel,
     openKeyboardShortcuts,
     openRecurringPanel,
+    openPermissionsPanel,
   } = useStore();
 
   const { data: phases = [] } = usePhases();
   const { data: stats } = useProjectStats(currentProject?.id);
 
   const views = [
+    { id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard },
     { id: 'list', label: 'List', icon: LayoutList },
     { id: 'board', label: 'Board', icon: Columns3 },
     { id: 'timeline', label: 'Timeline', icon: Calendar },
@@ -55,11 +59,15 @@ export default function Sidebar({ onClose }) {
     { id: 'reports', label: 'Reports', icon: BarChart3 },
   ];
 
+  // Check if current user can manage permissions
+  const canManagePermissions = user?.role === 'ADMIN';
+
   const tools = [
     { id: 'templates', label: 'Templates', icon: FileText, action: openTemplatesPanel },
     { id: 'recurring', label: 'Recurring', icon: RefreshCw, action: openRecurringPanel },
     { id: 'activity', label: 'Activity', icon: Activity, action: openActivityLog },
     { id: 'export', label: 'Export/Import', icon: Download, action: openExportImport },
+    ...(canManagePermissions ? [{ id: 'permissions', label: 'Permissions', icon: Shield, action: openPermissionsPanel }] : []),
   ];
 
   const totalTasks = phases.reduce((sum, p) => sum + (p._count?.tasks || 0), 0);

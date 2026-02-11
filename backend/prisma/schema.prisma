@@ -419,3 +419,35 @@ model UserSettings {
   createdAt             DateTime @default(now())
   updatedAt             DateTime @updatedAt
 }
+
+// ========== HIGH PRIORITY FEATURES ==========
+
+// Granular Permissions per user per project
+model ProjectPermission {
+  id              Int      @id @default(autoincrement())
+  userId          Int
+  projectId       Int
+
+  // Task permissions
+  canCreateTasks  Boolean  @default(true)
+  canEditTasks    Boolean  @default(true)
+  canDeleteTasks  Boolean  @default(false)
+  canAssignTasks  Boolean  @default(true)
+
+  // Phase permissions
+  canManagePhases Boolean  @default(false)
+
+  // Team permissions
+  canManageTeam   Boolean  @default(false)
+
+  // Settings permissions
+  canManageProject Boolean @default(false)
+
+  // View restrictions (JSON array of phase IDs user can see, null = all)
+  visiblePhases   String?  // JSON array: [1, 2, 3] or null for all
+
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  @@unique([userId, projectId])
+}

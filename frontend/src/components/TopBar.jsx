@@ -4,6 +4,7 @@ import useStore from '../store/useStore';
 import { usePhases } from '../hooks/useData';
 import { NotificationBell } from './NotificationsPanel';
 import FilterPresetsDropdown from './FilterPresetsDropdown';
+import OnlineUsers from './OnlineUsers';
 
 export default function TopBar({ onMenuClick }) {
   const {
@@ -143,6 +144,9 @@ export default function TopBar({ onMenuClick }) {
             </div>
           )}
         </div>
+
+        {/* Online Users */}
+        <OnlineUsers />
 
         {/* Notifications */}
         <NotificationBell />

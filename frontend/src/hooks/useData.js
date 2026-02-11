@@ -1009,3 +1009,57 @@ export function useUpdateEmailSettings() {
     },
   });
 }
+
+// ============ PERMISSIONS ============
+export function useMyPermissions() {
+  const projectId = useProjectId();
+  return useQuery({
+    queryKey: ['myPermissions', projectId],
+    queryFn: () => api.getMyPermissions(projectId).then(res => res.data),
+    enabled: !!projectId,
+  });
+}
+
+export function useUserPermissions(userId) {
+  const projectId = useProjectId();
+  return useQuery({
+    queryKey: ['userPermissions', projectId, userId],
+    queryFn: () => api.getUserPermissions(projectId, userId).then(res => res.data),
+    enabled: !!projectId && !!userId,
+  });
+}
+
+export function useAllProjectPermissions() {
+  const projectId = useProjectId();
+  return useQuery({
+    queryKey: ['projectPermissions', projectId],
+    queryFn: () => api.getAllProjectPermissions(projectId).then(res => res.data),
+    enabled: !!projectId,
+  });
+}
+
+export function useUpdateUserPermissions() {
+  const queryClient = useQueryClient();
+  const projectId = useProjectId();
+  return useMutation({
+    mutationFn: ({ userId, data }) => api.updateUserPermissions(projectId, userId, data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['projectPermissions'] });
+      queryClient.invalidateQueries({ queryKey: ['userPermissions'] });
+      queryClient.invalidateQueries({ queryKey: ['myPermissions'] });
+    },
+  });
+}
+
+export function useResetUserPermissions() {
+  const queryClient = useQueryClient();
+  const projectId = useProjectId();
+  return useMutation({
+    mutationFn: (userId) => api.resetUserPermissions(projectId, userId),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['projectPermissions'] });
+      queryClient.invalidateQueries({ queryKey: ['userPermissions'] });
+      queryClient.invalidateQueries({ queryKey: ['myPermissions'] });
+    },
+  });
+}

@@ -134,6 +134,16 @@ const useStore = create(
 
       // Set filters (used by filter presets)
       setStatusFilters: (filters) => set({ statusFilters: filters }),
+
+      // Global search
+      isGlobalSearchOpen: false,
+      openGlobalSearch: () => set({ isGlobalSearchOpen: true }),
+      closeGlobalSearch: () => set({ isGlobalSearchOpen: false }),
+
+      // Permissions panel
+      isPermissionsPanelOpen: false,
+      openPermissionsPanel: () => set({ isPermissionsPanelOpen: true }),
+      closePermissionsPanel: () => set({ isPermissionsPanelOpen: false }),
     }),
     {
       name: 'fshc-dashboard-storage',

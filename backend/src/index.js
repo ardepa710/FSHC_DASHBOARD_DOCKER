@@ -1,9 +1,12 @@
 const express = require('express');
+const http = require('http');
 const cors = require('cors');
 const helmet = require('helmet');
 const morgan = require('morgan');
 const path = require('path');
 require('dotenv').config();
+
+const { setupWebSocket } = require('./websocket');
 
 const authRoutes = require('./routes/auth');
 const userRoutes = require('./routes/users');
@@ -26,6 +29,7 @@ const reportsRoutes = require('./routes/reports');
 const exportRoutes = require('./routes/export');
 const filterPresetsRoutes = require('./routes/filterPresets');
 const settingsRoutes = require('./routes/settings');
+const permissionsRoutes = require('./routes/permissions');
 
 const app = express();
 const PORT = process.env.PORT || 3001;
@@ -62,6 +66,7 @@ app.use('/api/reports', reportsRoutes);
 app.use('/api/export', exportRoutes);
 app.use('/api/filter-presets', filterPresetsRoutes);
 app.use('/api/settings', settingsRoutes);
+app.use('/api/permissions', permissionsRoutes);
 
 // Health check
 app.get('/api/health', (req, res) => {
@@ -74,7 +79,14 @@ app.use((err, req, res, next) => {
   res.status(500).json({ error: 'Something went wrong!' });
 });
 
-app.listen(PORT, HOST, () => {
+// Create HTTP server
+const server = http.createServer(app);
+
+// Setup WebSocket
+setupWebSocket(server);
+
+server.listen(PORT, HOST, () => {
   console.log(`Server running on http://${HOST}:${PORT}`);
+  console.log(`WebSocket available at ws://${HOST}:${PORT}/ws`);
   console.log(`Accessible from network at http://<your-ip>:${PORT}`);
 });
