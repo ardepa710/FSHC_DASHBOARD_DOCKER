@@ -16,6 +16,6 @@ COPY src ./src/
 # Create uploads directory
 RUN mkdir -p uploads
 
-EXPOSE 3001
+EXPOSE 3002
 
 CMD ["node", "src/index.js"]

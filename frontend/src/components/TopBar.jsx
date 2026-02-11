@@ -1,10 +1,11 @@
-import { Search, SlidersHorizontal, Plus, Menu, LayoutList, Columns3, Calendar } from 'lucide-react';
+import { Search, SlidersHorizontal, Plus, Menu, LayoutList, Columns3, Calendar, CirclePlay } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import useStore from '../store/useStore';
 import { usePhases } from '../hooks/useData';
 import { NotificationBell } from './NotificationsPanel';
 import FilterPresetsDropdown from './FilterPresetsDropdown';
 import OnlineUsers from './OnlineUsers';
+import TutorialModal from './TutorialModal';
 
 export default function TopBar({ onMenuClick }) {
   const {
@@ -20,6 +21,7 @@ export default function TopBar({ onMenuClick }) {
 
   const { data: phases } = usePhases();
   const [showFilters, setShowFilters] = useState(false);
+  const [showTutorial, setShowTutorial] = useState(false);
 
   const currentPhase = phases?.find((p) => p.id === currentPhaseFilter);
   const title = currentPhaseFilter === 'all' ? 'All Tasks' : currentPhase?.name || 'Tasks';
@@ -148,6 +150,15 @@ export default function TopBar({ onMenuClick }) {
         {/* Online Users */}
         <OnlineUsers />
 
+        {/* Tutorial Video */}
+        <button
+          onClick={() => setShowTutorial(true)}
+          className="relative flex items-center justify-center w-9 h-9 rounded-lg bg-[#1a2035] border border-[#1e2640] text-[#8892a4] hover:text-[#6c8cff] hover:border-[#6c8cff] transition-colors"
+          title="Watch Tutorial"
+        >
+          <CirclePlay size={18} />
+        </button>
+
         {/* Notifications */}
         <NotificationBell />
 
@@ -176,6 +187,9 @@ export default function TopBar({ onMenuClick }) {
           className="w-full bg-[#1a2035] border border-[#1e2640] rounded-lg py-2.5 pl-9 pr-3 text-[13px] text-[#e0e0e0] outline-none focus:border-[#6c8cff] transition-[border-color] placeholder:text-[#556]"
         />
       </div>
+
+      {/* Tutorial Modal */}
+      <TutorialModal isOpen={showTutorial} onClose={() => setShowTutorial(false)} />
     </header>
   );
 }
