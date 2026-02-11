@@ -65,6 +65,34 @@ const useStore = create(
             : [...state.collapsedPhases, phaseId];
           return { collapsedPhases: newCollapsed };
         }),
+
+      // Selected tasks for bulk operations
+      selectedTasks: [],
+      toggleTaskSelection: (taskId) =>
+        set((state) => {
+          const newSelected = state.selectedTasks.includes(taskId)
+            ? state.selectedTasks.filter(id => id !== taskId)
+            : [...state.selectedTasks, taskId];
+          return { selectedTasks: newSelected };
+        }),
+      clearSelectedTasks: () => set({ selectedTasks: [] }),
+      setSelectedTasks: (taskIds) => set({ selectedTasks: taskIds }),
+
+      // Notifications panel
+      isNotificationsPanelOpen: false,
+      openNotificationsPanel: () => set({ isNotificationsPanelOpen: true }),
+      closeNotificationsPanel: () => set({ isNotificationsPanelOpen: false }),
+
+      // Tag filter
+      tagFilters: [],
+      toggleTagFilter: (tagId) =>
+        set((state) => {
+          const newFilters = state.tagFilters.includes(tagId)
+            ? state.tagFilters.filter(id => id !== tagId)
+            : [...state.tagFilters, tagId];
+          return { tagFilters: newFilters };
+        }),
+      clearTagFilters: () => set({ tagFilters: [] }),
     }),
     {
       name: 'fshc-dashboard-storage',

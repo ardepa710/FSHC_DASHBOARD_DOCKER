@@ -5,11 +5,16 @@ import TopBar from './components/TopBar';
 import ListView from './components/ListView';
 import BoardView from './components/BoardView';
 import TimelineView from './components/TimelineView';
+import CalendarView from './components/CalendarView';
+import MyTasksView from './components/MyTasksView';
+import ReportsView from './components/ReportsView';
 import TaskDetail from './components/TaskDetail';
 import TaskModal from './components/TaskModal';
 import LoginPage from './components/LoginPage';
 import ProjectSelector from './components/ProjectSelector';
 import UserManagement from './components/UserManagement';
+import NotificationsPanel from './components/NotificationsPanel';
+import BulkActionsBar from './components/BulkActionsBar';
 import useStore from './store/useStore';
 
 function Dashboard() {
@@ -63,6 +68,9 @@ function Dashboard() {
           {currentView === 'list' && <ListView />}
           {currentView === 'board' && <BoardView />}
           {currentView === 'timeline' && <TimelineView />}
+          {currentView === 'calendar' && <CalendarView />}
+          {currentView === 'mytasks' && <MyTasksView />}
+          {currentView === 'reports' && <ReportsView />}
         </div>
       </main>
 
@@ -72,6 +80,8 @@ function Dashboard() {
         onClose={closeCreateModal}
         defaultPhaseId={currentPhaseFilter !== 'all' ? currentPhaseFilter : undefined}
       />
+      <NotificationsPanel />
+      <BulkActionsBar />
     </div>
   );
 }

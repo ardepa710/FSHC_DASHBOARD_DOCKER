@@ -1,4 +1,4 @@
-import { ChevronDown, Check, ChevronRight } from 'lucide-react';
+import { ChevronDown, Check, ChevronRight, Square, CheckSquare } from 'lucide-react';
 import useStore from '../store/useStore';
 import { useTasks, usePhases, useUpdateTaskStatus } from '../hooks/useData';
 import { format } from 'date-fns';
@@ -39,6 +39,10 @@ export default function ListView() {
     collapsedPhases,
     togglePhaseCollapse,
     openDetail,
+    selectedTasks,
+    toggleTaskSelection,
+    setSelectedTasks,
+    clearSelectedTasks,
   } = useStore();
 
   const { data: tasks = [], isLoading } = useTasks({
@@ -191,7 +195,28 @@ export default function ListView() {
                     <table className="w-full border-collapse min-w-[700px]">
                       <thead>
                         <tr className="border-b border-[#1e2640]">
-                          <th className="text-[10px] font-semibold uppercase tracking-wider text-[#556] text-left py-3 pl-10 pr-4 w-[45%]">
+                          <th className="text-[10px] font-semibold uppercase tracking-wider text-[#556] text-left py-3 pl-3 w-8">
+                            <button
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                const phaseTaskIds = phaseTasks.map(t => t.id);
+                                const allSelected = phaseTaskIds.every(id => selectedTasks.includes(id));
+                                if (allSelected) {
+                                  setSelectedTasks(selectedTasks.filter(id => !phaseTaskIds.includes(id)));
+                                } else {
+                                  setSelectedTasks([...new Set([...selectedTasks, ...phaseTaskIds])]);
+                                }
+                              }}
+                              className="text-[#556] hover:text-[#6c8cff]"
+                            >
+                              {phaseTasks.length > 0 && phaseTasks.every(t => selectedTasks.includes(t.id)) ? (
+                                <CheckSquare size={16} className="text-[#6c8cff]" />
+                              ) : (
+                                <Square size={16} />
+                              )}
+                            </button>
+                          </th>
+                          <th className="text-[10px] font-semibold uppercase tracking-wider text-[#556] text-left py-3 pl-2 pr-4 w-[42%]">
                             Task
                           </th>
                           <th className="text-[10px] font-semibold uppercase tracking-wider text-[#556] text-left py-3 px-4 w-[20%]">
@@ -212,10 +237,28 @@ export default function ListView() {
                         {phaseTasks.map((task) => (
                           <tr
                             key={task.id}
-                            className="hover:bg-[#1a2035] cursor-pointer transition-colors border-b border-[rgba(30,38,64,0.5)]"
+                            className={clsx(
+                              'hover:bg-[#1a2035] cursor-pointer transition-colors border-b border-[rgba(30,38,64,0.5)]',
+                              selectedTasks.includes(task.id) && 'bg-[rgba(108,140,255,0.08)]'
+                            )}
                             onClick={() => openDetail(task.id)}
                           >
-                            <td className="py-3 pl-3 pr-4">
+                            <td className="py-3 pl-3 w-8">
+                              <button
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  toggleTaskSelection(task.id);
+                                }}
+                                className="text-[#556] hover:text-[#6c8cff]"
+                              >
+                                {selectedTasks.includes(task.id) ? (
+                                  <CheckSquare size={16} className="text-[#6c8cff]" />
+                                ) : (
+                                  <Square size={16} />
+                                )}
+                              </button>
+                            </td>
+                            <td className="py-3 pl-2 pr-4">
                               <div className="flex items-center gap-3">
                                 <button
                                   onClick={(e) => toggleDone(e, task)}

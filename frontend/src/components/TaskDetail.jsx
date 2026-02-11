@@ -17,6 +17,11 @@ import {
 } from '../hooks/useData';
 import { format, formatDistanceToNow } from 'date-fns';
 import clsx from 'clsx';
+import CommentsSection from './CommentsSection';
+import TagsSection from './TagsSection';
+import AttachmentsSection from './AttachmentsSection';
+import DependenciesSection from './DependenciesSection';
+import TimeTrackerWidget from './TimeTrackerWidget';
 
 const phaseIcons = ['📋', '🏢', '🏥', '🔍', '🔧', '🚀', '📈'];
 const phaseNames = [
@@ -691,6 +696,21 @@ export default function TaskDetail() {
                       </div>
                     ))}
                   </div>
+
+                  {/* Tags */}
+                  <TagsSection taskId={task.id} taskTags={task.tags || []} />
+
+                  {/* Dependencies */}
+                  <DependenciesSection taskId={task.id} currentTaskTitle={task.title} />
+
+                  {/* Time Tracking */}
+                  <TimeTrackerWidget taskId={task.id} />
+
+                  {/* Attachments */}
+                  <AttachmentsSection taskId={task.id} />
+
+                  {/* Comments */}
+                  <CommentsSection taskId={task.id} />
                 </>
               )}
             </div>

@@ -1,4 +1,4 @@
-import { LayoutList, Columns3, Calendar, Circle, ChevronLeft, LogOut, X } from 'lucide-react';
+import { LayoutList, Columns3, Calendar, Circle, ChevronLeft, LogOut, X, User, BarChart3, CalendarDays } from 'lucide-react';
 import useStore from '../store/useStore';
 import { usePhases, useProjectStats } from '../hooks/useData';
 import toast from 'react-hot-toast';
@@ -22,6 +22,12 @@ export default function Sidebar({ onClose }) {
     { id: 'list', label: 'List', icon: LayoutList },
     { id: 'board', label: 'Board', icon: Columns3 },
     { id: 'timeline', label: 'Timeline', icon: Calendar },
+    { id: 'calendar', label: 'Calendar', icon: CalendarDays },
+  ];
+
+  const personalViews = [
+    { id: 'mytasks', label: 'My Tasks', icon: User },
+    { id: 'reports', label: 'Reports', icon: BarChart3 },
   ];
 
   const totalTasks = phases.reduce((sum, p) => sum + (p._count?.tasks || 0), 0);
@@ -93,6 +99,26 @@ export default function Sidebar({ onClose }) {
         </p>
         <div className="space-y-1">
           {views.map((view) => (
+            <button
+              key={view.id}
+              onClick={() => handleViewChange(view.id)}
+              className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-[13px] transition-all ${
+                currentView === view.id
+                  ? 'bg-[rgba(108,140,255,0.12)] text-[#6c8cff] font-semibold'
+                  : 'text-[#8892a4] hover:bg-[#1a2035] hover:text-white'
+              }`}
+            >
+              <view.icon size={18} />
+              {view.label}
+            </button>
+          ))}
+        </div>
+
+        <p className="text-[10px] font-bold uppercase tracking-wider text-[#556] px-2 mb-2 mt-4">
+          Personal
+        </p>
+        <div className="space-y-1">
+          {personalViews.map((view) => (
             <button
               key={view.id}
               onClick={() => handleViewChange(view.id)}

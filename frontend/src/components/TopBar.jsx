@@ -1,7 +1,8 @@
-import { Search, SlidersHorizontal, Plus, Menu, LayoutList, Columns3, Calendar } from 'lucide-react';
+import { Search, SlidersHorizontal, Plus, Menu, LayoutList, Columns3, Calendar, CalendarDays } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import useStore from '../store/useStore';
 import { usePhases } from '../hooks/useData';
+import { NotificationBell } from './NotificationsPanel';
 
 export default function TopBar({ onMenuClick }) {
   const {
@@ -137,6 +138,9 @@ export default function TopBar({ onMenuClick }) {
             </div>
           )}
         </div>
+
+        {/* Notifications */}
+        <NotificationBell />
 
         {/* Create Task Button - Desktop only */}
         <button
