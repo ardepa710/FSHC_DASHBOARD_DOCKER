@@ -1,0 +1,147 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        Int      @id @default(autoincrement())
+  username  String   @unique
+  password  String
+  name      String
+  email     String?  @unique
+  role      UserRole @default(USER)
+  projects  UserProject[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Project {
+  id          Int      @id @default(autoincrement())
+  name        String
+  description String?
+  color       String   @default("#6c8cff")
+  icon        String   @default("📁")
+  isActive    Boolean  @default(true)
+  users       UserProject[]
+  phases      Phase[]
+  assignees   Assignee[]
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model UserProject {
+  id        Int      @id @default(autoincrement())
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId    Int
+  project   Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  projectId Int
+  role      ProjectRole @default(MEMBER)
+  createdAt DateTime @default(now())
+
+  @@unique([userId, projectId])
+}
+
+model Phase {
+  id        Int      @id @default(autoincrement())
+  name      String
+  icon      String?
+  color     String
+  duration  String?
+  order     Int      @default(0)
+  project   Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  projectId Int
+  tasks     Task[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Assignee {
+  id        Int      @id @default(autoincrement())
+  name      String
+  initials  String
+  color     String
+  role      String?
+  project   Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  projectId Int
+  tasks     Task[]
+  notes     Note[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Task {
+  id           Int           @id @default(autoincrement())
+  title        String
+  status       TaskStatus    @default(NOT_STARTED)
+  priority     Priority      @default(MEDIUM)
+  dueDate      DateTime?
+  description  String?
+  phase        Phase         @relation(fields: [phaseId], references: [id], onDelete: Cascade)
+  phaseId      Int
+  assignee     Assignee?     @relation(fields: [assigneeId], references: [id])
+  assigneeId   Int?
+  subtasks     Subtask[]
+  deliverables Deliverable[]
+  notes        Note[]
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+}
+
+model Subtask {
+  id        Int      @id @default(autoincrement())
+  title     String
+  completed Boolean  @default(false)
+  task      Task     @relation(fields: [taskId], references: [id], onDelete: Cascade)
+  taskId    Int
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Deliverable {
+  id        Int      @id @default(autoincrement())
+  label     String
+  type      String
+  task      Task     @relation(fields: [taskId], references: [id], onDelete: Cascade)
+  taskId    Int
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Note {
+  id         Int       @id @default(autoincrement())
+  content    String
+  task       Task      @relation(fields: [taskId], references: [id], onDelete: Cascade)
+  taskId     Int
+  author     Assignee? @relation(fields: [authorId], references: [id])
+  authorId   Int?
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
+}
+
+enum UserRole {
+  ADMIN
+  USER
+}
+
+enum ProjectRole {
+  OWNER
+  MEMBER
+  VIEWER
+}
+
+enum TaskStatus {
+  NOT_STARTED
+  IN_PROGRESS
+  BLOCKED
+  DONE
+}
+
+enum Priority {
+  LOW
+  MEDIUM
+  HIGH
+}

@@ -1,0 +1,1524 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FSHC Project Tracker — SentinelEdge.ai</title>
+<style>
+:root {
+  --bg0: #0a0e1a;
+  --bg1: #111827;
+  --bg2: #1a2035;
+  --bg3: #253050;
+  --border: #1e2640;
+  --text: #e0e0e0;
+  --text2: #8892a4;
+  --text3: #556;
+  --white: #fff;
+  --blue: #6c8cff;
+  --green: #10b981;
+  --amber: #f59e0b;
+  --red: #ef4444;
+  --purple: #8b5cf6;
+  --pink: #ec4899;
+  --teal: #14b8a6;
+  --radius: 8px;
+  --radius-lg: 12px;
+  --sidebar-w: 260px;
+}
+
+* { margin:0; padding:0; box-sizing:border-box; }
+body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: var(--bg0); color: var(--text); height: 100vh; overflow: hidden; display: flex; }
+
+/* Sidebar */
+.sidebar {
+  width: var(--sidebar-w);
+  background: var(--bg1);
+  border-right: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  flex-shrink: 0;
+  height: 100vh;
+}
+.sidebar-brand {
+  padding: 20px 20px 8px;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 8px;
+}
+.sidebar-brand h1 {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--white);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.sidebar-brand h1 span { color: var(--blue); }
+.sidebar-brand .sub {
+  font-size: 11px;
+  color: var(--text2);
+  margin-top: 4px;
+  padding-bottom: 12px;
+}
+
+.sidebar-section {
+  padding: 12px 12px 4px;
+}
+.sidebar-section-label {
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1.2px;
+  color: var(--text3);
+  padding: 0 8px 8px;
+}
+
+.sidebar-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 9px 12px;
+  border-radius: var(--radius);
+  cursor: pointer;
+  font-size: 13px;
+  color: var(--text2);
+  transition: all 0.15s;
+  position: relative;
+}
+.sidebar-item:hover { background: var(--bg2); color: var(--white); }
+.sidebar-item.active { background: rgba(108,140,255,0.12); color: var(--blue); font-weight: 600; }
+.sidebar-item .icon { width: 18px; text-align: center; font-size: 14px; }
+.sidebar-item .badge {
+  margin-left: auto;
+  background: var(--bg3);
+  color: var(--text2);
+  font-size: 10px;
+  font-weight: 600;
+  padding: 2px 7px;
+  border-radius: 10px;
+}
+.sidebar-item.active .badge { background: rgba(108,140,255,0.2); color: var(--blue); }
+
+.sidebar-progress {
+  margin-top: auto;
+  padding: 16px 20px;
+  border-top: 1px solid var(--border);
+}
+.sidebar-progress .label {
+  font-size: 11px;
+  color: var(--text2);
+  margin-bottom: 8px;
+  display: flex;
+  justify-content: space-between;
+}
+.sidebar-progress .bar {
+  height: 6px;
+  background: var(--bg3);
+  border-radius: 3px;
+  overflow: hidden;
+}
+.sidebar-progress .bar-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--blue), var(--purple));
+  border-radius: 3px;
+  transition: width 0.4s ease;
+}
+.sidebar-user {
+  padding: 12px 20px 16px;
+  border-top: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.sidebar-user .avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--blue), var(--purple));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--white);
+}
+.sidebar-user .info { font-size: 12px; }
+.sidebar-user .info .name { color: var(--white); font-weight: 600; }
+.sidebar-user .info .role { color: var(--text3); font-size: 10px; }
+
+/* Main */
+.main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+/* Top Bar */
+.topbar {
+  padding: 16px 28px;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  flex-shrink: 0;
+}
+.topbar h2 {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--white);
+}
+.view-tabs {
+  display: flex;
+  gap: 2px;
+  background: var(--bg2);
+  border-radius: var(--radius);
+  padding: 3px;
+  margin-left: 20px;
+}
+.view-tab {
+  padding: 6px 14px;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text2);
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+.view-tab:hover { color: var(--white); }
+.view-tab.active { background: var(--bg3); color: var(--white); }
+
+.topbar-right {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.search-box {
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 7px 12px;
+  font-size: 12px;
+  color: var(--text);
+  width: 220px;
+  outline: none;
+  transition: border-color 0.2s;
+}
+.search-box:focus { border-color: var(--blue); }
+.search-box::placeholder { color: var(--text3); }
+.filter-btn {
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 7px 14px;
+  font-size: 12px;
+  color: var(--text2);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.filter-btn:hover { border-color: var(--blue); color: var(--white); }
+
+/* Content Area */
+.content {
+  flex: 1;
+  overflow-y: auto;
+  padding: 24px 28px;
+}
+
+/* ===== LIST VIEW ===== */
+.phase-group {
+  margin-bottom: 24px;
+}
+.phase-group-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 0;
+  cursor: pointer;
+  user-select: none;
+}
+.phase-group-header .chevron {
+  font-size: 10px;
+  color: var(--text3);
+  transition: transform 0.2s;
+  width: 16px;
+  text-align: center;
+}
+.phase-group-header.collapsed .chevron { transform: rotate(-90deg); }
+.phase-group-header .phase-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+.phase-group-header h3 {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--white);
+}
+.phase-group-header .count {
+  font-size: 11px;
+  color: var(--text3);
+  margin-left: 4px;
+}
+.phase-group-header .phase-progress {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 11px;
+  color: var(--text3);
+}
+.phase-group-header .mini-bar {
+  width: 80px;
+  height: 4px;
+  background: var(--bg3);
+  border-radius: 2px;
+  overflow: hidden;
+}
+.phase-group-header .mini-bar-fill {
+  height: 100%;
+  border-radius: 2px;
+  transition: width 0.3s;
+}
+
+.task-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+.task-table th {
+  font-size: 10px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: var(--text3);
+  text-align: left;
+  padding: 8px 12px;
+  border-bottom: 1px solid var(--border);
+}
+.task-table th:first-child { padding-left: 42px; }
+
+.task-row {
+  cursor: pointer;
+  transition: background 0.1s;
+}
+.task-row:hover { background: var(--bg2); }
+.task-row td {
+  padding: 10px 12px;
+  font-size: 13px;
+  border-bottom: 1px solid rgba(30,38,64,0.5);
+  vertical-align: middle;
+}
+.task-row td:first-child { padding-left: 12px; }
+
+.task-name-cell {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.task-checkbox {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  border: 2px solid var(--text3);
+  flex-shrink: 0;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 10px;
+  color: transparent;
+  transition: all 0.2s;
+}
+.task-checkbox:hover { border-color: var(--blue); }
+.task-checkbox.done { border-color: var(--green); background: var(--green); color: var(--white); }
+.task-name { color: var(--text); }
+.task-row.done .task-name { color: var(--text3); text-decoration: line-through; }
+
+.status-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 3px 10px;
+  border-radius: 12px;
+  font-size: 11px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+.status-pill.not-started { background: rgba(85,85,102,0.2); color: var(--text3); }
+.status-pill.in-progress { background: rgba(108,140,255,0.15); color: var(--blue); }
+.status-pill.done { background: rgba(16,185,129,0.15); color: var(--green); }
+.status-pill.blocked { background: rgba(239,68,68,0.15); color: var(--red); }
+.status-pill .dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+}
+.status-pill.not-started .dot { background: var(--text3); }
+.status-pill.in-progress .dot { background: var(--blue); }
+.status-pill.done .dot { background: var(--green); }
+.status-pill.blocked .dot { background: var(--red); }
+
+.assignee-avatar {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--white);
+}
+
+.priority-indicator {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 11px;
+  font-weight: 600;
+}
+.priority-indicator.high { color: var(--red); }
+.priority-indicator.medium { color: var(--amber); }
+.priority-indicator.low { color: var(--text3); }
+.priority-indicator .bar {
+  display: flex;
+  gap: 2px;
+}
+.priority-indicator .bar span {
+  width: 3px;
+  height: 10px;
+  border-radius: 1px;
+  background: var(--bg3);
+}
+.priority-indicator.high .bar span { background: var(--red); }
+.priority-indicator.medium .bar span:nth-child(-n+2) { background: var(--amber); }
+.priority-indicator.low .bar span:first-child { background: var(--text3); }
+
+.due-date {
+  font-size: 12px;
+  color: var(--text2);
+}
+.due-date.overdue { color: var(--red); font-weight: 600; }
+.due-date.soon { color: var(--amber); }
+
+/* ===== BOARD VIEW (Kanban) ===== */
+.board-container {
+  display: flex;
+  gap: 16px;
+  overflow-x: auto;
+  padding-bottom: 20px;
+  height: 100%;
+  align-items: flex-start;
+}
+.board-column {
+  min-width: 280px;
+  max-width: 300px;
+  flex-shrink: 0;
+  background: var(--bg1);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  max-height: calc(100vh - 160px);
+}
+.board-column-header {
+  padding: 14px 16px;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-shrink: 0;
+}
+.board-column-header .col-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+}
+.board-column-header h4 {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--white);
+}
+.board-column-header .col-count {
+  margin-left: auto;
+  font-size: 11px;
+  color: var(--text3);
+  background: var(--bg3);
+  padding: 2px 8px;
+  border-radius: 10px;
+}
+.board-column-body {
+  padding: 8px;
+  overflow-y: auto;
+  flex: 1;
+}
+.board-card {
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 12px 14px;
+  margin-bottom: 8px;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+.board-card:hover {
+  border-color: var(--blue);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+}
+.board-card .card-phase {
+  font-size: 10px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 6px;
+}
+.board-card .card-title {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text);
+  line-height: 1.4;
+  margin-bottom: 10px;
+}
+.board-card.done .card-title { color: var(--text3); text-decoration: line-through; }
+.board-card-footer {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.board-card-footer .card-assignee {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 9px;
+  font-weight: 700;
+  color: var(--white);
+}
+.board-card-footer .card-date {
+  font-size: 10px;
+  color: var(--text3);
+  margin-left: auto;
+}
+.board-card-footer .card-priority {
+  display: flex;
+  gap: 2px;
+}
+.board-card-footer .card-priority span {
+  width: 3px;
+  height: 8px;
+  border-radius: 1px;
+  background: var(--bg3);
+}
+
+/* ===== TIMELINE VIEW ===== */
+.timeline-view {
+  padding: 10px 0;
+}
+.timeline-phase {
+  display: flex;
+  align-items: stretch;
+  margin-bottom: 4px;
+}
+.timeline-label {
+  width: 200px;
+  flex-shrink: 0;
+  padding: 12px 16px 12px 0;
+  text-align: right;
+}
+.timeline-label h4 {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--white);
+}
+.timeline-label .tl-dates {
+  font-size: 10px;
+  color: var(--text3);
+  margin-top: 2px;
+}
+.timeline-bar-area {
+  flex: 1;
+  position: relative;
+  padding: 10px 0;
+}
+.timeline-bar {
+  height: 32px;
+  border-radius: 6px;
+  position: relative;
+  display: flex;
+  align-items: center;
+  padding: 0 12px;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--white);
+  cursor: pointer;
+  transition: all 0.15s;
+}
+.timeline-bar:hover { filter: brightness(1.2); transform: scaleY(1.1); }
+.timeline-bar .bar-progress {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  border-radius: 6px;
+  opacity: 0.3;
+}
+.timeline-grid {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+}
+.timeline-grid-line {
+  flex: 1;
+  border-right: 1px solid rgba(30,38,64,0.5);
+}
+.timeline-week-labels {
+  display: flex;
+  padding-left: 200px;
+  margin-bottom: 8px;
+}
+.timeline-week-labels span {
+  flex: 1;
+  font-size: 10px;
+  color: var(--text3);
+  text-align: center;
+}
+.timeline-today {
+  position: absolute;
+  width: 2px;
+  background: var(--amber);
+  top: 0;
+  bottom: 0;
+  z-index: 5;
+}
+.timeline-today::before {
+  content: 'TODAY';
+  position: absolute;
+  top: -18px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 9px;
+  font-weight: 700;
+  color: var(--amber);
+  letter-spacing: 1px;
+}
+
+/* ===== TASK DETAIL PANEL ===== */
+.detail-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0,0,0,0.5);
+  z-index: 100;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s;
+}
+.detail-overlay.open { opacity: 1; pointer-events: all; }
+
+.task-detail {
+  position: fixed;
+  top: 0;
+  right: -480px;
+  width: 480px;
+  height: 100vh;
+  background: var(--bg1);
+  border-left: 1px solid var(--border);
+  z-index: 101;
+  transition: right 0.3s ease;
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+}
+.task-detail.open { right: 0; }
+
+.detail-top {
+  padding: 20px 24px;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.detail-close {
+  width: 30px;
+  height: 30px;
+  border-radius: 6px;
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  color: var(--text2);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+}
+.detail-close:hover { color: var(--white); border-color: var(--blue); }
+.detail-top .phase-tag-sm {
+  font-size: 10px;
+  padding: 3px 10px;
+  border-radius: 12px;
+  font-weight: 600;
+}
+.detail-actions {
+  margin-left: auto;
+  display: flex;
+  gap: 6px;
+}
+.detail-actions button {
+  padding: 6px 12px;
+  font-size: 11px;
+  font-weight: 600;
+  border-radius: 6px;
+  cursor: pointer;
+  border: 1px solid var(--border);
+  background: var(--bg2);
+  color: var(--text2);
+  transition: all 0.15s;
+}
+.detail-actions button:hover { border-color: var(--blue); color: var(--white); }
+.detail-actions button.primary { background: var(--blue); border-color: var(--blue); color: var(--white); }
+.detail-actions button.primary:hover { filter: brightness(1.1); }
+
+.detail-body {
+  padding: 24px;
+  flex: 1;
+}
+.detail-task-title {
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--white);
+  line-height: 1.4;
+  margin-bottom: 20px;
+}
+
+.detail-field {
+  margin-bottom: 18px;
+}
+.detail-field-label {
+  font-size: 10px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: var(--text3);
+  margin-bottom: 6px;
+}
+.detail-field-value {
+  font-size: 13px;
+  color: var(--text);
+  line-height: 1.5;
+}
+.detail-field-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+.detail-subtasks h4 {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text2);
+  margin-bottom: 10px;
+}
+.detail-subtask {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 0;
+  border-bottom: 1px solid rgba(30,38,64,0.5);
+  font-size: 13px;
+  color: var(--text);
+}
+.detail-subtask:last-child { border-bottom: none; }
+
+.detail-notes {
+  margin-top: 20px;
+  padding-top: 20px;
+  border-top: 1px solid var(--border);
+}
+.detail-notes textarea {
+  width: 100%;
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  color: var(--text);
+  font-family: inherit;
+  font-size: 13px;
+  padding: 12px;
+  resize: vertical;
+  min-height: 80px;
+  outline: none;
+}
+.detail-notes textarea:focus { border-color: var(--blue); }
+
+.detail-deliverables {
+  margin-top: 16px;
+}
+.deliverable-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 6px 12px;
+  font-size: 12px;
+  color: var(--text2);
+  margin: 3px 4px 3px 0;
+}
+.deliverable-chip .d-type {
+  font-size: 9px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: var(--text3);
+  background: var(--bg3);
+  padding: 1px 6px;
+  border-radius: 4px;
+}
+
+/* ===== DASHBOARD SUMMARY ===== */
+.dashboard-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+  margin-bottom: 28px;
+}
+.dash-card {
+  background: var(--bg1);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 18px 20px;
+}
+.dash-card .dc-label {
+  font-size: 11px;
+  color: var(--text2);
+  margin-bottom: 4px;
+}
+.dash-card .dc-value {
+  font-size: 28px;
+  font-weight: 700;
+  color: var(--white);
+}
+.dash-card .dc-sub {
+  font-size: 11px;
+  color: var(--text3);
+  margin-top: 2px;
+}
+
+/* Hidden views */
+.view-panel { display: none; }
+.view-panel.active { display: block; }
+.view-panel.active-flex { display: flex; }
+
+/* Scrollbar */
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--bg3); border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: var(--text3); }
+
+/* Filter dropdown */
+.filter-dropdown {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  margin-top: 4px;
+  background: var(--bg1);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 8px;
+  min-width: 180px;
+  z-index: 50;
+  display: none;
+}
+.filter-dropdown.open { display: block; }
+.filter-dropdown label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 8px;
+  font-size: 12px;
+  color: var(--text2);
+  cursor: pointer;
+  border-radius: 4px;
+}
+.filter-dropdown label:hover { background: var(--bg2); color: var(--white); }
+</style>
+</head>
+<body>
+
+<!-- SIDEBAR -->
+<div class="sidebar">
+  <div class="sidebar-brand">
+    <h1><span>S</span> SentinelEdge.ai</h1>
+    <div class="sub">FSHC Revenue Cycle Project</div>
+  </div>
+
+  <div class="sidebar-section">
+    <div class="sidebar-section-label">Views</div>
+    <div class="sidebar-item active" onclick="switchView('list', this)">
+      <span class="icon">&#9776;</span> List View
+    </div>
+    <div class="sidebar-item" onclick="switchView('board', this)">
+      <span class="icon">&#9638;</span> Board View
+    </div>
+    <div class="sidebar-item" onclick="switchView('timeline', this)">
+      <span class="icon">&#9644;</span> Timeline
+    </div>
+  </div>
+
+  <div class="sidebar-section">
+    <div class="sidebar-section-label">Phases</div>
+    <div class="sidebar-item" onclick="filterPhase('all')" id="phase-all">
+      <span class="icon">&#9679;</span> All Phases <span class="badge" id="badge-all"></span>
+    </div>
+    <div class="sidebar-item" onclick="filterPhase(0)" id="phase-0">
+      <span class="icon" style="color:var(--amber)">&#9679;</span> Prototype & Prep <span class="badge" id="badge-0"></span>
+    </div>
+    <div class="sidebar-item" onclick="filterPhase(1)" id="phase-1">
+      <span class="icon" style="color:var(--blue)">&#9679;</span> Corp Discovery <span class="badge" id="badge-1"></span>
+    </div>
+    <div class="sidebar-item" onclick="filterPhase(2)" id="phase-2">
+      <span class="icon" style="color:var(--green)">&#9679;</span> Site Discovery <span class="badge" id="badge-2"></span>
+    </div>
+    <div class="sidebar-item" onclick="filterPhase(3)" id="phase-3">
+      <span class="icon" style="color:var(--green)">&#9679;</span> Synthesis <span class="badge" id="badge-3"></span>
+    </div>
+    <div class="sidebar-item" onclick="filterPhase(4)" id="phase-4">
+      <span class="icon" style="color:var(--purple)">&#9679;</span> Build in Retool <span class="badge" id="badge-4"></span>
+    </div>
+    <div class="sidebar-item" onclick="filterPhase(5)" id="phase-5">
+      <span class="icon" style="color:var(--pink)">&#9679;</span> Deploy & Train <span class="badge" id="badge-5"></span>
+    </div>
+    <div class="sidebar-item" onclick="filterPhase(6)" id="phase-6">
+      <span class="icon" style="color:var(--teal)">&#9679;</span> Expand Payers <span class="badge" id="badge-6"></span>
+    </div>
+  </div>
+
+  <div class="sidebar-progress">
+    <div class="label">
+      <span>Overall Progress</span>
+      <span id="overallPct">0%</span>
+    </div>
+    <div class="bar">
+      <div class="bar-fill" id="overallBar" style="width:0%"></div>
+    </div>
+  </div>
+
+  <div class="sidebar-user">
+    <div class="avatar">JS</div>
+    <div class="info">
+      <div class="name">Jay Solema</div>
+      <div class="role">SentinelEdge.ai</div>
+    </div>
+  </div>
+</div>
+
+<!-- MAIN AREA -->
+<div class="main">
+  <div class="topbar">
+    <h2 id="viewTitle">All Tasks</h2>
+    <div class="view-tabs">
+      <div class="view-tab active" onclick="switchView('list', null, this)">List</div>
+      <div class="view-tab" onclick="switchView('board', null, this)">Board</div>
+      <div class="view-tab" onclick="switchView('timeline', null, this)">Timeline</div>
+    </div>
+    <div class="topbar-right">
+      <input type="text" class="search-box" placeholder="Search tasks..." id="searchBox" oninput="searchTasks(this.value)">
+      <div style="position:relative">
+        <div class="filter-btn" onclick="toggleFilterDropdown()">
+          <span>&#9881;</span> Filter
+        </div>
+        <div class="filter-dropdown" id="filterDropdown">
+          <label><input type="checkbox" checked onchange="toggleStatusFilter('not-started')"> Not Started</label>
+          <label><input type="checkbox" checked onchange="toggleStatusFilter('in-progress')"> In Progress</label>
+          <label><input type="checkbox" checked onchange="toggleStatusFilter('blocked')"> Blocked</label>
+          <label><input type="checkbox" checked onchange="toggleStatusFilter('done')"> Done</label>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="content" id="contentArea">
+    <!-- Views injected by JS -->
+    <div id="view-list" class="view-panel active"></div>
+    <div id="view-board" class="view-panel"></div>
+    <div id="view-timeline" class="view-panel"></div>
+  </div>
+</div>
+
+<!-- TASK DETAIL PANEL -->
+<div class="detail-overlay" id="detailOverlay" onclick="closeDetail()"></div>
+<div class="task-detail" id="taskDetail">
+  <div class="detail-top">
+    <div class="detail-close" onclick="closeDetail()">&#x2715;</div>
+    <span class="phase-tag-sm" id="detailPhaseTag"></span>
+    <div class="detail-actions">
+      <button onclick="cycleStatus()">Change Status</button>
+      <button class="primary" onclick="markDone()">Mark Done</button>
+    </div>
+  </div>
+  <div class="detail-body" id="detailBody"></div>
+</div>
+
+<script>
+// ==================================================
+// DATA — All real FSHC project data
+// ==================================================
+const phaseColors = ['#f59e0b','#6c8cff','#10b981','#10b981','#8b5cf6','#ec4899','#14b8a6'];
+const phaseNames = ['Prototype & Prep','Corporate Discovery','Site Discovery','Synthesis & Sign-off','Build in Retool','Deploy & Train','Expand Payers'];
+const phaseDurations = ['Week 1-2','Week 2-4','Week 4-10','Week 10-12','Week 12-15','Week 15-17','Week 20+'];
+const phaseIcons = ['\u{1F4CB}','\u{1F3E2}','\u{1F3E5}','\u{1F50D}','\u{1F527}','\u{1F680}','\u{1F4C8}'];
+
+const assignees = {
+  'JS': { name: 'Jay Solema', initials: 'JS', color: '#6c8cff' },
+  'KH': { name: 'Kolby Hahn', initials: 'KH', color: '#8b5cf6' },
+  'LE': { name: 'Leandra Eberhardt', initials: 'LE', color: '#10b981' },
+  'LY': { name: 'Lauren Yzaguirre', initials: 'LY', color: '#ec4899' },
+  'TF': { name: 'Teri Farmer', initials: 'TF', color: '#f59e0b' },
+  'PF': { name: 'Pam Fitzsimmons', initials: 'PF', color: '#14b8a6' },
+  'HH': { name: 'Harold Hammond', initials: 'HH', color: '#ef4444' },
+  'AI': { name: 'Claude AI', initials: 'AI', color: '#8892a4' },
+};
+
+// Tasks: id, phase, title, status, assignee, priority, due, notes, subtasks, deliverables
+let tasks = [
+  // Phase 0: Prototype & Prep
+  { id:1, phase:0, title:'Deploy HTML prototype to Netlify — share public URL with Kolby', status:'in-progress', assignee:'JS', priority:'high', due:'2026-02-14', notes:'Prototype has 7 views: Dashboard, Claims, EOM, Appeals, AR Aging, Denials, plus resident detail panel.', subtasks:['Create Netlify account','Drag-and-drop deploy','Configure custom domain','Share URL with Kolby'], deliverables:[{label:'Live prototype URL',type:'Netlify'}] },
+  { id:2, phase:0, title:'Walk Kolby through the prototype and collect feedback', status:'not-started', assignee:'JS', priority:'high', due:'2026-02-17', notes:'Schedule 30-min screen share. Walk through all 7 views. Capture what resonates and what is missing.', subtasks:['Schedule call with Kolby','Prepare demo script','Capture feedback notes','Update prototype based on feedback'], deliverables:[] },
+  { id:3, phase:0, title:'Upload source files to NotebookLM notebook (Medicare + Medicaid)', status:'done', assignee:'JS', priority:'medium', due:'2026-02-10', notes:'4 source files uploaded: project overview, 11-step workflow, personnel roster, Medicare gaps.', subtasks:['Create NotebookLM notebook','Upload 4 source files','Verify AI can reference all data'], deliverables:[{label:'NotebookLM notebook (loaded)',type:'Google'}] },
+  { id:4, phase:0, title:'Create Medicaid source files for NotebookLM', status:'not-started', assignee:'JS', priority:'medium', due:'2026-02-21', notes:'Need to research Medicaid-specific workflows, personnel, and compliance requirements for SNFs.', subtasks:['Research TX Medicaid SNF billing','Document Medicaid workflow differences','Upload to NotebookLM'], deliverables:[{label:'Medicaid source docs',type:'NotebookLM'}] },
+  { id:5, phase:0, title:'Review interview questions — add Medicaid-specific questions', status:'not-started', assignee:'JS', priority:'medium', due:'2026-02-18', notes:'Interview template created as docx. Need to add Medicaid questions for each role.', subtasks:['Review current interview template','Add Medicaid-specific questions','Validate with Kolby'], deliverables:[{label:'Updated interview guide',type:'Document'}] },
+  { id:6, phase:0, title:'Work with Kolby to identify 2-3 representative sites for deep discovery', status:'not-started', assignee:'KH', priority:'high', due:'2026-02-21', notes:'Need sites that represent different workflows — one strong, one struggling, one average.', subtasks:['Discuss site selection criteria','Get Kolby recommendation','Confirm site contacts'], deliverables:[{label:'2-3 deep-dive sites selected',type:'Strategy'}] },
+  { id:7, phase:0, title:'Schedule corporate team interviews first', status:'not-started', assignee:'JS', priority:'high', due:'2026-02-24', notes:'Corporate teams: Central Intake (Leandra), CBO Billing (Lauren, Stacey, Regina), Clinical Reimb (Pam, Tonia), Revenue Cycle (Teri), Compliance (Harold, Heidi).', subtasks:['Email Leandra for intake interview','Email Lauren for CBO interview','Email Pam for clinical reimb interview','Email Teri for revenue cycle interview','Email Harold for compliance interview'], deliverables:[{label:'Interview schedule',type:'Planning'}] },
+  { id:8, phase:0, title:'Iterate prototype based on Kolby feedback', status:'not-started', assignee:'JS', priority:'medium', due:'2026-02-28', notes:'Depends on feedback from Kolby walkthrough.', subtasks:[], deliverables:[{label:'Updated prototype v2',type:'Netlify'}] },
+
+  // Phase 1: Corporate Discovery
+  { id:9, phase:1, title:'Interview Central Intake (Leandra Eberhardt) — Step 1: Admission', status:'not-started', assignee:'JS', priority:'high', due:'2026-03-06', notes:'Covers Medicare + Medicaid admission process. Ask about PCC screens, insurance verification, bed-hold rules.', subtasks:['Prepare admission questions','Conduct interview','Capture PCC screenshots','Upload notes to NotebookLM'], deliverables:[] },
+  { id:10, phase:1, title:'Interview CBO Billing (Lauren, Stacey, Regina) — Steps 4-8', status:'not-started', assignee:'JS', priority:'high', due:'2026-03-10', notes:'Covers EOM, Triple Check, Claim Submission, DDE Tracking, 835 Posting for both payers.', subtasks:['Prepare billing questions','Interview Lauren','Interview Stacey','Interview Regina','Document Excel workarounds','Upload notes to NotebookLM'], deliverables:[] },
+  { id:11, phase:1, title:'Interview Clinical Reimbursement (Pam, Tonia) — Step 9: Appeals', status:'not-started', assignee:'JS', priority:'high', due:'2026-03-13', notes:'Covers ADR responses, denial management, appeal tracking. Both payer types.', subtasks:['Prepare appeals questions','Conduct interview','Document denial patterns','Upload notes to NotebookLM'], deliverables:[] },
+  { id:12, phase:1, title:'Interview Teri Farmer — Medicaid workflow ownership + overall process', status:'not-started', assignee:'JS', priority:'high', due:'2026-03-13', notes:'Teri owns revenue cycle. Key interview for understanding Medicaid differences and where it overlaps with Medicare.', subtasks:['Prepare Medicaid-specific questions','Conduct interview','Map Medicaid vs Medicare differences','Upload notes to NotebookLM'], deliverables:[{label:'Medicare vs Medicaid overlap map',type:'Analysis'}] },
+  { id:13, phase:1, title:'Interview Compliance (Harold Hammond, Heidi Wefing) — Medicaid regulatory', status:'not-started', assignee:'JS', priority:'medium', due:'2026-03-17', notes:'Medicaid compliance requirements, state regulations, audit prep.', subtasks:['Prepare compliance questions','Conduct interview','Document regulatory requirements','Upload notes to NotebookLM'], deliverables:[] },
+  { id:14, phase:1, title:'Document where Medicare and Medicaid processes overlap vs diverge', status:'not-started', assignee:'JS', priority:'high', due:'2026-03-20', notes:'Synthesize from all corporate interviews. This becomes the comparison doc.', subtasks:['Review all interview notes','Create overlap map','Identify divergence points','Validate with Teri'], deliverables:[{label:'Medicare vs Medicaid overlap map',type:'Analysis'}] },
+  { id:15, phase:1, title:'Capture all app URLs, screenshots, login screens', status:'not-started', assignee:'JS', priority:'medium', due:'2026-03-20', notes:'Every system they touch: PCC, DDE, Waystar, TMHP, insurance portals. Both payer workflows.', subtasks:['Screenshot PCC screens','Screenshot DDE screens','Screenshot Waystar','Document Medicaid portals','Upload all to NotebookLM'], deliverables:[{label:'App screenshots & URLs',type:'Capture'}] },
+  { id:16, phase:1, title:'Document Excel workarounds (Benefits Exhaust, Denial Log, EOM Errors)', status:'not-started', assignee:'JS', priority:'medium', due:'2026-03-20', notes:'These are the prime automation targets. Get copies of actual spreadsheets if possible.', subtasks:['Get Benefits Exhaust spreadsheet','Get Denial Log spreadsheet','Get EOM Error tracking','Document how each is used'], deliverables:[{label:'Excel workaround docs',type:'Automation Intel'}] },
+  { id:17, phase:1, title:'Ask: Which sites follow the process best? Which are different?', status:'not-started', assignee:'JS', priority:'medium', due:'2026-03-20', notes:'Ask every corporate interviewee. Build a preliminary site variation picture before visiting sites.', subtasks:['Add question to each interview','Compile site intel','Share with Kolby for validation'], deliverables:[{label:'Site variation intel',type:'NotebookLM'}] },
+
+  // Phase 2: Site Discovery
+  { id:18, phase:2, title:'Deep Discovery — Site 1: Full interviews (DON, MDS, Nursing, Social Svcs, Admin)', status:'not-started', assignee:'JS', priority:'high', due:'2026-04-03', notes:'First deep-dive site. Full day on-site. Cover both Medicare and Medicaid at every interview.', subtasks:['Interview DON / Med Director','Interview MDS Nurses','Interview Nursing staff','Interview Social Services','Interview Facility Admin','Screenshot every PCC screen','Upload all notes to NotebookLM'], deliverables:[{label:'Deep-dive site report #1',type:'NotebookLM'}] },
+  { id:19, phase:2, title:'Deep Discovery — Site 2: Full interviews', status:'not-started', assignee:'JS', priority:'high', due:'2026-04-10', notes:'Second deep-dive site. Same protocol as Site 1.', subtasks:['Interview all roles','Compare to Site 1 findings','Document differences','Upload notes to NotebookLM'], deliverables:[{label:'Deep-dive site report #2',type:'NotebookLM'}] },
+  { id:20, phase:2, title:'Deep Discovery — Site 3: Full interviews (if needed)', status:'not-started', assignee:'JS', priority:'medium', due:'2026-04-17', notes:'Optional third deep-dive site if first two show significant variation.', subtasks:['Evaluate if needed based on Site 1-2 findings','Conduct interviews if proceeding'], deliverables:[{label:'Deep-dive site report #3',type:'NotebookLM'}] },
+  { id:21, phase:2, title:'Validation visits — Remaining 9-10 sites', status:'not-started', assignee:'JS', priority:'high', due:'2026-05-08', notes:'Shorter check-ins at each remaining facility. Confirm standard process or document differences. 1-2 per week.', subtasks:['Schedule validation visits','Visit Hillside Medical Lodge (Gatesville)','Visit Lexington Medical Lodge (Farmersville)','Visit Madison Medical Resort (Odessa)','Visit Midland Medical Lodge (Midland)','Visit Princeton Medical Lodge (Princeton)','Visit Senior Care of Wichita Falls','Visit Sheridan Medical Lodge (Burkburnett)','Visit Farmersville Healthcare & Rehab','Visit Whitney Nursing & Rehab','Visit Ashton Medical Lodge (Midland)','Visit Cheyenne Medical Lodge (Mesquite)','Visit Traymore (Dallas)'], deliverables:[{label:'Validation reports (9-10)',type:'NotebookLM'},{label:'Site variation matrix',type:'Analysis'}] },
+  { id:22, phase:2, title:'Validate Medicaid differences flagged at deep-dive sites', status:'not-started', assignee:'JS', priority:'medium', due:'2026-05-08', notes:'At each validation visit, specifically check Medicaid-specific issues found at deep-dive sites.', subtasks:['Prepare Medicaid validation checklist','Check at each site','Document confirmations and exceptions'], deliverables:[] },
+
+  // Phase 3: Synthesis & Sign-off
+  { id:23, phase:3, title:'Use NotebookLM to compare corporate process vs site reality', status:'not-started', assignee:'AI', priority:'high', due:'2026-05-15', notes:'Ask NotebookLM to find discrepancies between what corporate says and what sites actually do.', subtasks:['Query NotebookLM for Medicare comparison','Query for Medicaid comparison','Document all discrepancies'], deliverables:[] },
+  { id:24, phase:3, title:'Map Medicare vs Medicaid: shared steps, unique steps, compliance differences', status:'not-started', assignee:'JS', priority:'high', due:'2026-05-18', notes:'Final authoritative map of where the two payer workflows overlap and diverge.', subtasks:['Create shared steps list','Document Medicare-only steps','Document Medicaid-only steps','Map compliance differences'], deliverables:[{label:'Medicare vs Medicaid comparison',type:'Analysis'}] },
+  { id:25, phase:3, title:'Build site variation matrix — which sites deviate and how', status:'not-started', assignee:'JS', priority:'high', due:'2026-05-18', notes:'12 facilities x key process steps matrix showing standard vs exception.', subtasks:['Compile all site data','Create matrix format','Highlight critical deviations'], deliverables:[{label:'Site variation matrix',type:'Analysis'}] },
+  { id:26, phase:3, title:'Update HTML prototype with real validated workflow data', status:'not-started', assignee:'JS', priority:'medium', due:'2026-05-22', notes:'Replace demo data with real numbers from discovery. Update facility names, claim patterns, denial data.', subtasks:['Update dashboard metrics','Update claims data','Update AR aging data','Update denial patterns'], deliverables:[{label:'Updated prototype on Netlify',type:'Demo'}] },
+  { id:27, phase:3, title:'Present findings to Kolby — get sign-off on standard workflows', status:'not-started', assignee:'JS', priority:'high', due:'2026-05-25', notes:'Key milestone. Kolby must approve the documented workflows before we build.', subtasks:['Prepare presentation','Schedule review meeting','Present findings','Get written sign-off'], deliverables:[{label:'Kolby sign-off',type:'Approval'}] },
+  { id:28, phase:3, title:'Prioritize automation opportunities (Excel replacements first)', status:'not-started', assignee:'JS', priority:'medium', due:'2026-05-25', notes:'Rank the automation targets by impact and effort. Excel workarounds are quick wins.', subtasks:['Score each opportunity','Rank by ROI','Get Kolby agreement on priorities'], deliverables:[{label:'Automation priority list',type:'Strategy'}] },
+
+  // Phase 4: Build in Retool
+  { id:29, phase:4, title:'Create Supabase account and run SQL setup script', status:'not-started', assignee:'JS', priority:'high', due:'2026-06-01', notes:'SQL script already created. Need to extend for multi-payer and multi-site support.', subtasks:['Create Supabase project','Run base SQL script','Extend schema for Medicaid','Add multi-site tables'], deliverables:[{label:'Supabase database (live)',type:'Backend'}] },
+  { id:30, phase:4, title:'Create Retool account and connect to Supabase', status:'not-started', assignee:'JS', priority:'high', due:'2026-06-03', notes:'Follow the Retool Build Guide already created.', subtasks:['Create Retool account','Add Supabase as resource','Test connection'], deliverables:[] },
+  { id:31, phase:4, title:'Build Dashboard screen (workflow overview, payer filter)', status:'not-started', assignee:'JS', priority:'high', due:'2026-06-10', notes:'Main landing page. Status cards, facility comparison, AI insights.', subtasks:['Build KPI cards','Build facility comparison table','Add payer type filter','Add date range filter'], deliverables:[] },
+  { id:32, phase:4, title:'Build Step Detail screen (personnel, apps, process)', status:'not-started', assignee:'JS', priority:'medium', due:'2026-06-15', notes:'Click into any workflow step to see full detail.', subtasks:['Build step detail layout','Add personnel section','Add app integration links','Add process documentation'], deliverables:[] },
+  { id:33, phase:4, title:'Build Claims & AR screens', status:'not-started', assignee:'JS', priority:'high', due:'2026-06-17', notes:'Claims queue, AR aging, denial log — all from the prototype, now with real data.', subtasks:['Build claims queue with filters','Build AR aging view','Build denial log','Add facility and payer filters'], deliverables:[] },
+  { id:34, phase:4, title:'Populate with real data from all discovery interviews', status:'not-started', assignee:'JS', priority:'medium', due:'2026-06-20', notes:'Replace demo data with validated data from discovery phase.', subtasks:['Import facility data','Import personnel data','Import workflow data','Import sample claims data'], deliverables:[] },
+  { id:35, phase:4, title:'Test with Lauren Yzaguirre or another CBO team member', status:'not-started', assignee:'LY', priority:'high', due:'2026-06-24', notes:'First real user test. Have Lauren walk through her daily tasks using the app.', subtasks:['Schedule testing session','Observe Lauren using app','Capture feedback','Fix critical issues'], deliverables:[{label:'User feedback from CBO',type:'Validation'}] },
+
+  // Phase 5: Deploy & Train
+  { id:36, phase:5, title:'Deploy Retool app to CBO team (corporate)', status:'not-started', assignee:'JS', priority:'high', due:'2026-07-01', notes:'First production deployment to the central billing office.', subtasks:['Set up user accounts','Deploy to production','Verify access for all CBO staff'], deliverables:[] },
+  { id:37, phase:5, title:'Train Lauren and billing specialists', status:'not-started', assignee:'JS', priority:'high', due:'2026-07-03', notes:'Hands-on training session. Walk through daily workflows in the app.', subtasks:['Create training materials','Conduct training session','Document common questions','Create quick reference guide'], deliverables:[{label:'Training materials',type:'Documentation'}] },
+  { id:38, phase:5, title:'Roll out to 2-3 pilot facility contacts', status:'not-started', assignee:'JS', priority:'medium', due:'2026-07-10', notes:'Expand from corporate to a few facility-level users.', subtasks:['Select pilot facilities','Set up facility user accounts','Train facility contacts'], deliverables:[] },
+  { id:39, phase:5, title:'Collect feedback during first 2 weeks of use', status:'not-started', assignee:'JS', priority:'medium', due:'2026-07-17', notes:'Active feedback collection. Check in daily the first week, then every other day.', subtasks:['Set up feedback channel','Daily check-ins week 1','Compile feedback log','Prioritize changes'], deliverables:[{label:'Feedback log',type:'Iteration'}] },
+  { id:40, phase:5, title:'Present results to FSHC leadership', status:'not-started', assignee:'JS', priority:'high', due:'2026-07-24', notes:'Show the impact. Before/after metrics. Time saved. Errors prevented. This is the sales moment for expansion.', subtasks:['Compile usage metrics','Build presentation','Present to Shane and leadership','Discuss expansion plan'], deliverables:[{label:'Leadership presentation',type:'Sales'}] },
+  { id:41, phase:5, title:'Document what worked for SentinelEdge.ai playbook', status:'not-started', assignee:'JS', priority:'low', due:'2026-07-28', notes:'Capture the discovery-to-deployment process as a repeatable playbook for future clients.', subtasks:['Document process','Capture lessons learned','Template the approach'], deliverables:[] },
+
+  // Phase 6: Expand Payers
+  { id:42, phase:6, title:'Insurance discovery (Rebecca McNeely, Lauren Yzaguirre)', status:'not-started', assignee:'JS', priority:'medium', due:'2026-08-15', notes:'Third payer type. Framework exists, relationships built. Should be faster.', subtasks:['Interview Rebecca on insurance workflows','Interview Lauren on insurance billing','Document insurance-specific steps','Add to Retool app'], deliverables:[] },
+  { id:43, phase:6, title:'Private Pay discovery', status:'not-started', assignee:'JS', priority:'low', due:'2026-09-01', notes:'Fourth payer type.', subtasks:['Identify private pay contacts','Conduct interviews','Document workflows','Add to Retool'], deliverables:[] },
+  { id:44, phase:6, title:'VA discovery', status:'not-started', assignee:'JS', priority:'low', due:'2026-09-15', notes:'Fifth payer type.', subtasks:['Identify VA contacts','Conduct interviews','Document workflows','Add to Retool'], deliverables:[] },
+  { id:45, phase:6, title:'Hospice discovery', status:'not-started', assignee:'JS', priority:'low', due:'2026-10-01', notes:'Sixth payer type.', subtasks:['Identify Hospice contacts','Conduct interviews','Document workflows','Add to Retool'], deliverables:[] },
+  { id:46, phase:6, title:'Position SentinelEdge.ai for repeatable offering', status:'not-started', assignee:'JS', priority:'medium', due:'2026-10-15', notes:'Package the whole process — discovery, prototype, build, deploy — as a productized service for other healthcare orgs.', subtasks:['Finalize case study','Create sales materials','Identify target prospects','Build pricing model'], deliverables:[{label:'SentinelEdge.ai case study',type:'Business'},{label:'Repeatable playbook',type:'Strategy'}] },
+];
+
+// State
+let currentView = 'list';
+let currentPhaseFilter = 'all';
+let statusFilters = new Set(['not-started','in-progress','blocked','done']);
+let searchQuery = '';
+let selectedTaskId = null;
+
+// ==================================================
+// RENDER FUNCTIONS
+// ==================================================
+
+function getFilteredTasks() {
+  return tasks.filter(t => {
+    if (currentPhaseFilter !== 'all' && t.phase !== currentPhaseFilter) return false;
+    if (!statusFilters.has(t.status)) return false;
+    if (searchQuery && !t.title.toLowerCase().includes(searchQuery.toLowerCase())) return false;
+    return true;
+  });
+}
+
+function getTasksByPhase(phaseIdx) {
+  return getFilteredTasks().filter(t => t.phase === phaseIdx);
+}
+
+function getTasksByStatus(status) {
+  return getFilteredTasks().filter(t => t.status === status);
+}
+
+function getPhaseProgress(phaseIdx) {
+  const phaseTasks = tasks.filter(t => t.phase === phaseIdx);
+  if (!phaseTasks.length) return 0;
+  const done = phaseTasks.filter(t => t.status === 'done').length;
+  return Math.round((done / phaseTasks.length) * 100);
+}
+
+function getOverallProgress() {
+  const done = tasks.filter(t => t.status === 'done').length;
+  return Math.round((done / tasks.length) * 100);
+}
+
+function formatDate(d) {
+  if (!d) return '';
+  const date = new Date(d + 'T00:00:00');
+  const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  return months[date.getMonth()] + ' ' + date.getDate();
+}
+
+function getDueClass(d) {
+  if (!d) return '';
+  const now = new Date();
+  const due = new Date(d + 'T00:00:00');
+  const diff = (due - now) / (1000*60*60*24);
+  if (diff < 0) return 'overdue';
+  if (diff < 7) return 'soon';
+  return '';
+}
+
+function statusLabel(s) {
+  return { 'not-started':'Not Started', 'in-progress':'In Progress', 'done':'Done', 'blocked':'Blocked' }[s] || s;
+}
+
+function priorityHTML(p) {
+  const cls = p || 'low';
+  const bars = cls === 'high' ? 3 : cls === 'medium' ? 2 : 1;
+  let b = '';
+  for (let i = 0; i < 3; i++) b += '<span></span>';
+  return `<div class="priority-indicator ${cls}"><div class="bar">${b}</div></div>`;
+}
+
+function assigneeHTML(a, size) {
+  const person = assignees[a];
+  if (!person) return '';
+  const s = size || 24;
+  return `<div class="assignee-avatar" style="width:${s}px;height:${s}px;background:${person.color};font-size:${s < 24 ? 9 : 10}px" title="${person.name}">${person.initials}</div>`;
+}
+
+// ---- LIST VIEW ----
+function renderListView() {
+  const el = document.getElementById('view-list');
+  let html = '';
+
+  // Dashboard summary cards
+  const allFiltered = getFilteredTasks();
+  const inProg = allFiltered.filter(t => t.status === 'in-progress').length;
+  const done = allFiltered.filter(t => t.status === 'done').length;
+  const blocked = allFiltered.filter(t => t.status === 'blocked').length;
+  const highP = allFiltered.filter(t => t.priority === 'high').length;
+
+  html += `<div class="dashboard-grid">
+    <div class="dash-card"><div class="dc-label">Total Tasks</div><div class="dc-value">${allFiltered.length}</div><div class="dc-sub">across ${currentPhaseFilter === 'all' ? '7 phases' : '1 phase'}</div></div>
+    <div class="dash-card"><div class="dc-label">In Progress</div><div class="dc-value" style="color:var(--blue)">${inProg}</div><div class="dc-sub">${done} completed</div></div>
+    <div class="dash-card"><div class="dc-label">Blocked</div><div class="dc-value" style="color:${blocked ? 'var(--red)' : 'var(--green)'}">${blocked}</div><div class="dc-sub">${blocked ? 'needs attention' : 'all clear'}</div></div>
+    <div class="dash-card"><div class="dc-label">High Priority</div><div class="dc-value" style="color:var(--amber)">${highP}</div><div class="dc-sub">tasks flagged</div></div>
+  </div>`;
+
+  // Phase groups
+  const phasesToShow = currentPhaseFilter === 'all' ? [0,1,2,3,4,5,6] : [currentPhaseFilter];
+
+  for (const pi of phasesToShow) {
+    const pTasks = getTasksByPhase(pi);
+    if (pTasks.length === 0 && currentPhaseFilter === 'all') continue;
+
+    const prog = getPhaseProgress(pi);
+    const doneCount = tasks.filter(t => t.phase === pi && t.status === 'done').length;
+    const totalCount = tasks.filter(t => t.phase === pi).length;
+
+    html += `<div class="phase-group" id="phase-group-${pi}">
+      <div class="phase-group-header" onclick="togglePhaseGroup(${pi})">
+        <span class="chevron">&#9660;</span>
+        <div class="phase-dot" style="background:${phaseColors[pi]}"></div>
+        <h3>${phaseIcons[pi]} ${phaseNames[pi]}</h3>
+        <span class="count">${pTasks.length} tasks</span>
+        <div class="phase-progress">
+          <span>${doneCount}/${totalCount}</span>
+          <div class="mini-bar"><div class="mini-bar-fill" style="width:${prog}%;background:${phaseColors[pi]}"></div></div>
+          <span>${prog}%</span>
+        </div>
+      </div>
+      <div class="phase-group-body" id="phase-body-${pi}">
+        <table class="task-table">
+          <thead><tr><th>Task</th><th>Status</th><th>Assignee</th><th>Priority</th><th>Due</th></tr></thead>
+          <tbody>`;
+
+    for (const t of pTasks) {
+      html += `<tr class="task-row ${t.status === 'done' ? 'done' : ''}" onclick="openDetail(${t.id})">
+        <td><div class="task-name-cell">
+          <div class="task-checkbox ${t.status === 'done' ? 'done' : ''}" onclick="event.stopPropagation();toggleDone(${t.id})">&#10003;</div>
+          <span class="task-name">${t.title}</span>
+        </div></td>
+        <td><span class="status-pill ${t.status}"><span class="dot"></span>${statusLabel(t.status)}</span></td>
+        <td>${assigneeHTML(t.assignee)}</td>
+        <td>${priorityHTML(t.priority)}</td>
+        <td><span class="due-date ${getDueClass(t.due)}">${formatDate(t.due)}</span></td>
+      </tr>`;
+    }
+
+    html += `</tbody></table></div></div>`;
+  }
+
+  el.innerHTML = html;
+}
+
+// ---- BOARD VIEW ----
+function renderBoardView() {
+  const el = document.getElementById('view-board');
+  const statuses = [
+    { key: 'not-started', label: 'Not Started', color: 'var(--text3)' },
+    { key: 'in-progress', label: 'In Progress', color: 'var(--blue)' },
+    { key: 'blocked', label: 'Blocked', color: 'var(--red)' },
+    { key: 'done', label: 'Done', color: 'var(--green)' },
+  ];
+
+  let html = '<div class="board-container">';
+
+  for (const s of statuses) {
+    const sTasks = getFilteredTasks().filter(t => t.status === s.key);
+    html += `<div class="board-column">
+      <div class="board-column-header">
+        <div class="col-dot" style="background:${s.color}"></div>
+        <h4>${s.label}</h4>
+        <span class="col-count">${sTasks.length}</span>
+      </div>
+      <div class="board-column-body">`;
+
+    for (const t of sTasks) {
+      const pBars = t.priority === 'high' ? 3 : t.priority === 'medium' ? 2 : 1;
+      let pBarHTML = '';
+      for (let i = 0; i < 3; i++) {
+        const color = i < pBars ? (t.priority === 'high' ? 'var(--red)' : t.priority === 'medium' ? 'var(--amber)' : 'var(--text3)') : 'var(--bg3)';
+        pBarHTML += `<span style="background:${color}"></span>`;
+      }
+
+      html += `<div class="board-card ${t.status === 'done' ? 'done' : ''}" onclick="openDetail(${t.id})">
+        <div class="card-phase" style="color:${phaseColors[t.phase]}">${phaseNames[t.phase]}</div>
+        <div class="card-title">${t.title}</div>
+        <div class="board-card-footer">
+          ${t.assignee ? `<div class="card-assignee" style="background:${assignees[t.assignee]?.color || '#556'}">${assignees[t.assignee]?.initials || '?'}</div>` : ''}
+          <div class="card-priority">${pBarHTML}</div>
+          <span class="card-date">${formatDate(t.due)}</span>
+        </div>
+      </div>`;
+    }
+
+    html += '</div></div>';
+  }
+
+  html += '</div>';
+  el.innerHTML = html;
+}
+
+// ---- TIMELINE VIEW ----
+function renderTimelineView() {
+  const el = document.getElementById('view-timeline');
+  const totalWeeks = 24;
+  const weekWidth = 100 / totalWeeks;
+
+  let html = '<div class="timeline-view">';
+
+  // Week labels
+  html += '<div class="timeline-week-labels">';
+  for (let w = 1; w <= totalWeeks; w++) {
+    html += `<span>W${w}</span>`;
+  }
+  html += '</div>';
+
+  const phaseWeeks = [
+    { start: 0, end: 2 },   // Phase 0
+    { start: 2, end: 4 },   // Phase 1
+    { start: 4, end: 10 },  // Phase 2
+    { start: 10, end: 12 }, // Phase 3
+    { start: 12, end: 15 }, // Phase 4
+    { start: 15, end: 17 }, // Phase 5
+    { start: 20, end: 24 }, // Phase 6
+  ];
+
+  const phasesToShow = currentPhaseFilter === 'all' ? [0,1,2,3,4,5,6] : [currentPhaseFilter];
+
+  for (const pi of phasesToShow) {
+    const pw = phaseWeeks[pi];
+    const prog = getPhaseProgress(pi);
+    const left = (pw.start / totalWeeks) * 100;
+    const width = ((pw.end - pw.start) / totalWeeks) * 100;
+    const taskCount = tasks.filter(t => t.phase === pi).length;
+    const doneCount = tasks.filter(t => t.phase === pi && t.status === 'done').length;
+
+    html += `<div class="timeline-phase">
+      <div class="timeline-label">
+        <h4>${phaseIcons[pi]} ${phaseNames[pi]}</h4>
+        <div class="tl-dates">${phaseDurations[pi]} &middot; ${doneCount}/${taskCount} done</div>
+      </div>
+      <div class="timeline-bar-area">
+        <div class="timeline-bar" style="margin-left:${left}%;width:${width}%;background:${phaseColors[pi]}40;border:1px solid ${phaseColors[pi]}60" onclick="filterPhase(${pi})">
+          <div class="bar-progress" style="width:${prog}%;background:${phaseColors[pi]}"></div>
+          <span style="position:relative;z-index:2">${prog}%</span>
+        </div>
+      </div>
+    </div>`;
+  }
+
+  // Today marker description
+  html += '<div style="padding:20px 0 0 200px;font-size:11px;color:var(--amber)">&#9650; We are currently in Week 1-2 (Prototype & Prep)</div>';
+
+  html += '</div>';
+  el.innerHTML = html;
+}
+
+// ---- TASK DETAIL PANEL ----
+function openDetail(taskId) {
+  selectedTaskId = taskId;
+  const t = tasks.find(t => t.id === taskId);
+  if (!t) return;
+
+  const tag = document.getElementById('detailPhaseTag');
+  tag.textContent = phaseNames[t.phase];
+  tag.style.background = phaseColors[t.phase] + '20';
+  tag.style.color = phaseColors[t.phase];
+
+  const body = document.getElementById('detailBody');
+  let html = `<div class="detail-task-title">${t.title}</div>`;
+
+  html += `<div class="detail-field-row">
+    <div class="detail-field">
+      <div class="detail-field-label">Status</div>
+      <div class="detail-field-value"><span class="status-pill ${t.status}"><span class="dot"></span>${statusLabel(t.status)}</span></div>
+    </div>
+    <div class="detail-field">
+      <div class="detail-field-label">Priority</div>
+      <div class="detail-field-value">${priorityHTML(t.priority)} <span style="margin-left:6px;font-size:12px;color:var(--text2)">${t.priority ? t.priority.charAt(0).toUpperCase() + t.priority.slice(1) : 'None'}</span></div>
+    </div>
+  </div>`;
+
+  html += `<div class="detail-field-row">
+    <div class="detail-field">
+      <div class="detail-field-label">Assignee</div>
+      <div class="detail-field-value" style="display:flex;align-items:center;gap:8px">${assigneeHTML(t.assignee, 28)} ${assignees[t.assignee]?.name || 'Unassigned'}</div>
+    </div>
+    <div class="detail-field">
+      <div class="detail-field-label">Due Date</div>
+      <div class="detail-field-value"><span class="due-date ${getDueClass(t.due)}">${formatDate(t.due) || 'No date'}</span></div>
+    </div>
+  </div>`;
+
+  html += `<div class="detail-field">
+    <div class="detail-field-label">Phase</div>
+    <div class="detail-field-value">${phaseIcons[t.phase]} ${phaseNames[t.phase]} <span style="color:var(--text3);font-size:11px">(${phaseDurations[t.phase]})</span></div>
+  </div>`;
+
+  if (t.notes) {
+    html += `<div class="detail-field">
+      <div class="detail-field-label">Notes</div>
+      <div class="detail-field-value">${t.notes}</div>
+    </div>`;
+  }
+
+  if (t.subtasks && t.subtasks.length) {
+    html += `<div class="detail-subtasks"><h4>Subtasks (${t.subtasks.length})</h4>`;
+    for (const st of t.subtasks) {
+      html += `<div class="detail-subtask"><div class="task-checkbox" style="width:16px;height:16px;border-radius:4px">&#10003;</div>${st}</div>`;
+    }
+    html += '</div>';
+  }
+
+  if (t.deliverables && t.deliverables.length) {
+    html += `<div class="detail-deliverables"><div class="detail-field-label">Deliverables</div>`;
+    for (const d of t.deliverables) {
+      html += `<span class="deliverable-chip">${d.label} <span class="d-type">${d.type}</span></span>`;
+    }
+    html += '</div>';
+  }
+
+  html += `<div class="detail-notes">
+    <div class="detail-field-label">Add a Note</div>
+    <textarea placeholder="Type a note or update..."></textarea>
+  </div>`;
+
+  body.innerHTML = html;
+
+  document.getElementById('detailOverlay').classList.add('open');
+  document.getElementById('taskDetail').classList.add('open');
+}
+
+function closeDetail() {
+  document.getElementById('detailOverlay').classList.remove('open');
+  document.getElementById('taskDetail').classList.remove('open');
+  selectedTaskId = null;
+}
+
+// ==================================================
+// INTERACTIONS
+// ==================================================
+
+function switchView(view, sidebarEl, tabEl) {
+  currentView = view;
+  document.querySelectorAll('.view-panel').forEach(v => { v.classList.remove('active'); v.classList.remove('active-flex'); });
+  const viewEl = document.getElementById('view-' + view);
+  if (view === 'board') viewEl.classList.add('active-flex');
+  else viewEl.classList.add('active');
+
+  // Sidebar active
+  if (sidebarEl) {
+    document.querySelectorAll('.sidebar-section:first-of-type .sidebar-item').forEach(i => i.classList.remove('active'));
+    sidebarEl.classList.add('active');
+  } else {
+    document.querySelectorAll('.sidebar-section:nth-of-type(1) .sidebar-item').forEach(i => i.classList.remove('active'));
+    const items = document.querySelectorAll('.sidebar-section:nth-of-type(1) .sidebar-item');
+    const idx = view === 'list' ? 0 : view === 'board' ? 1 : 2;
+    if (items[idx]) items[idx].classList.add('active');
+  }
+
+  // Topbar tabs
+  document.querySelectorAll('.view-tab').forEach(t => t.classList.remove('active'));
+  if (tabEl) tabEl.classList.add('active');
+  else {
+    const tabs = document.querySelectorAll('.view-tab');
+    const idx = view === 'list' ? 0 : view === 'board' ? 1 : 2;
+    if (tabs[idx]) tabs[idx].classList.add('active');
+  }
+
+  renderAll();
+}
+
+function filterPhase(phase) {
+  currentPhaseFilter = phase;
+  document.querySelectorAll('.sidebar-section:nth-of-type(2) .sidebar-item').forEach(i => i.classList.remove('active'));
+  const id = phase === 'all' ? 'phase-all' : 'phase-' + phase;
+  const el = document.getElementById(id);
+  if (el) el.classList.add('active');
+
+  document.getElementById('viewTitle').textContent = phase === 'all' ? 'All Tasks' : phaseNames[phase];
+  renderAll();
+}
+
+function togglePhaseGroup(idx) {
+  const header = document.querySelector(`#phase-group-${idx} .phase-group-header`);
+  const body = document.getElementById(`phase-body-${idx}`);
+  if (header.classList.contains('collapsed')) {
+    header.classList.remove('collapsed');
+    body.style.display = '';
+  } else {
+    header.classList.add('collapsed');
+    body.style.display = 'none';
+  }
+}
+
+function toggleDone(taskId) {
+  const t = tasks.find(t => t.id === taskId);
+  if (!t) return;
+  t.status = t.status === 'done' ? 'not-started' : 'done';
+  renderAll();
+}
+
+function cycleStatus() {
+  if (!selectedTaskId) return;
+  const t = tasks.find(t => t.id === selectedTaskId);
+  if (!t) return;
+  const order = ['not-started','in-progress','blocked','done'];
+  const idx = order.indexOf(t.status);
+  t.status = order[(idx + 1) % order.length];
+  openDetail(selectedTaskId);
+  renderAll();
+}
+
+function markDone() {
+  if (!selectedTaskId) return;
+  const t = tasks.find(t => t.id === selectedTaskId);
+  if (!t) return;
+  t.status = 'done';
+  openDetail(selectedTaskId);
+  renderAll();
+}
+
+function searchTasks(q) {
+  searchQuery = q;
+  renderAll();
+}
+
+function toggleStatusFilter(status) {
+  if (statusFilters.has(status)) statusFilters.delete(status);
+  else statusFilters.add(status);
+  renderAll();
+}
+
+function toggleFilterDropdown() {
+  document.getElementById('filterDropdown').classList.toggle('open');
+}
+
+// Close filter dropdown on outside click
+document.addEventListener('click', (e) => {
+  if (!e.target.closest('.filter-btn') && !e.target.closest('.filter-dropdown')) {
+    document.getElementById('filterDropdown').classList.remove('open');
+  }
+});
+
+// ==================================================
+// UPDATE BADGES & PROGRESS
+// ==================================================
+function updateSidebar() {
+  const pct = getOverallProgress();
+  document.getElementById('overallPct').textContent = pct + '%';
+  document.getElementById('overallBar').style.width = pct + '%';
+
+  document.getElementById('badge-all').textContent = tasks.length;
+  for (let i = 0; i < 7; i++) {
+    const badge = document.getElementById('badge-' + i);
+    if (badge) badge.textContent = tasks.filter(t => t.phase === i).length;
+  }
+}
+
+function renderAll() {
+  renderListView();
+  renderBoardView();
+  renderTimelineView();
+  updateSidebar();
+}
+
+// Initial render
+renderAll();
+
+// Keyboard shortcut
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape') closeDetail();
+  if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
+    e.preventDefault();
+    document.getElementById('searchBox').focus();
+  }
+});
+</script>
+</body>
+</html>
