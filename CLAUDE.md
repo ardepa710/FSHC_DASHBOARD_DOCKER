@@ -262,3 +262,84 @@ PORT=3001
 - `?` - Show shortcuts
 - `1-5` - Switch views
 - `Escape` - Close modals/panels
+
+## Docker Deployment
+
+### Repositories
+- **App:** https://github.com/ardepa710/FSHC_DASHBOARD_APP
+- **Docker:** https://github.com/ardepa710/FSHC_DASHBOARD_DOCKER
+
+### Docker Files
+```
+fshc_dashboard/
+├── docker-compose.yml      # Orchestrates all services
+├── .env.example            # Environment variables template
+├── backend/
+│   ├── Dockerfile          # Node.js 20 Alpine + Prisma
+│   └── .dockerignore
+└── frontend/
+    ├── Dockerfile          # Vite build + Nginx
+    ├── nginx.conf          # Proxy config for API/WebSocket
+    └── .dockerignore
+```
+
+### Services (docker-compose)
+| Service | Image | Port | Description |
+|---------|-------|------|-------------|
+| db | postgres:15-alpine | 5432 (internal) | PostgreSQL database |
+| backend | custom | 3001 (internal) | Express API + WebSocket |
+| frontend | custom (nginx) | 80 (external) | Static files + reverse proxy |
+
+### Quick Deploy
+```bash
+# Clone repository
+git clone https://github.com/ardepa710/FSHC_DASHBOARD_DOCKER.git
+cd FSHC_DASHBOARD_DOCKER
+
+# Configure environment
+cp .env.example .env
+nano .env  # Change passwords and JWT_SECRET
+
+# Build and start
+docker-compose up -d --build
+
+# Access at http://localhost:80
+```
+
+### Environment Variables (.env)
+```bash
+# Database
+POSTGRES_USER=fshc
+POSTGRES_PASSWORD=your_secure_password
+POSTGRES_DB=fshc_dashboard
+
+# JWT Secret (CHANGE IN PRODUCTION!)
+JWT_SECRET=your-super-secret-jwt-key
+
+# External port
+APP_PORT=80
+```
+
+### Nginx Proxy Routes
+- `/` → Static frontend files
+- `/api/*` → Backend API (port 3001)
+- `/ws` → WebSocket connection
+- `/uploads/*` → File uploads
+
+### Useful Commands
+```bash
+# View logs
+docker-compose logs -f
+
+# Restart services
+docker-compose restart
+
+# Stop all
+docker-compose down
+
+# Stop and remove volumes (WARNING: deletes data)
+docker-compose down -v
+
+# Rebuild single service
+docker-compose up -d --build backend
+```
