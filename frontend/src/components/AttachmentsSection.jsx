@@ -1,9 +1,23 @@
 import { useState, useRef } from 'react';
 import { Paperclip, Upload, Download, Trash2, File, Image, FileText } from 'lucide-react';
-import { formatDistanceToNow } from 'date-fns';
 import toast from 'react-hot-toast';
 import { useAttachments, useUploadAttachment, useDeleteAttachment } from '../hooks/useData';
 import useStore from '../store/useStore';
+
+const formatRelativeTime = (date) => {
+  const now = new Date();
+  const then = new Date(date);
+  const diffMs = now - then;
+  const diffSec = Math.floor(diffMs / 1000);
+  const diffMin = Math.floor(diffSec / 60);
+  const diffHr = Math.floor(diffMin / 60);
+  const diffDay = Math.floor(diffHr / 24);
+
+  if (diffDay > 0) return `${diffDay} day${diffDay > 1 ? 's' : ''} ago`;
+  if (diffHr > 0) return `${diffHr} hour${diffHr > 1 ? 's' : ''} ago`;
+  if (diffMin > 0) return `${diffMin} minute${diffMin > 1 ? 's' : ''} ago`;
+  return 'just now';
+};
 
 const FILE_ICONS = {
   'image/': Image,
@@ -169,7 +183,7 @@ export default function AttachmentsSection({ taskId }) {
                   </p>
                   <p className="text-[10px] text-[#556]">
                     {formatFileSize(attachment.size)} •{' '}
-                    {formatDistanceToNow(new Date(attachment.createdAt), { addSuffix: true })}
+                    {formatRelativeTime(attachment.createdAt)}
                   </p>
                 </div>
 

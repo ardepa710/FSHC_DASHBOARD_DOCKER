@@ -1,10 +1,24 @@
 import { useState } from 'react';
 import { Send, Trash2, MessageSquare, Reply } from 'lucide-react';
-import { formatDistanceToNow } from 'date-fns';
 import toast from 'react-hot-toast';
 import { useComments, useCreateComment, useDeleteComment, useUsers } from '../hooks/useData';
 import useStore from '../store/useStore';
 import clsx from 'clsx';
+
+const formatRelativeTime = (date) => {
+  const now = new Date();
+  const then = new Date(date);
+  const diffMs = now - then;
+  const diffSec = Math.floor(diffMs / 1000);
+  const diffMin = Math.floor(diffSec / 60);
+  const diffHr = Math.floor(diffMin / 60);
+  const diffDay = Math.floor(diffHr / 24);
+
+  if (diffDay > 0) return `${diffDay} day${diffDay > 1 ? 's' : ''} ago`;
+  if (diffHr > 0) return `${diffHr} hour${diffHr > 1 ? 's' : ''} ago`;
+  if (diffMin > 0) return `${diffMin} minute${diffMin > 1 ? 's' : ''} ago`;
+  return 'just now';
+};
 
 export default function CommentsSection({ taskId }) {
   const { user } = useStore();
@@ -103,7 +117,7 @@ export default function CommentsSection({ taskId }) {
               {comment.author?.name || 'Unknown'}
             </span>
             <span className="text-[10px] text-[#556]">
-              {formatDistanceToNow(new Date(comment.createdAt), { addSuffix: true })}
+              {formatRelativeTime(comment.createdAt)}
             </span>
           </div>
           <p className="text-[13px] text-[#e0e0e0] mt-1 whitespace-pre-wrap">

@@ -1,8 +1,22 @@
 import { Bell, X, Check, CheckCheck } from 'lucide-react';
-import { formatDistanceToNow } from 'date-fns';
 import useStore from '../store/useStore';
 import { useNotifications, useUnreadCount, useMarkNotificationRead, useMarkAllRead } from '../hooks/useData';
 import clsx from 'clsx';
+
+const formatRelativeTime = (date) => {
+  const now = new Date();
+  const then = new Date(date);
+  const diffMs = now - then;
+  const diffSec = Math.floor(diffMs / 1000);
+  const diffMin = Math.floor(diffSec / 60);
+  const diffHr = Math.floor(diffMin / 60);
+  const diffDay = Math.floor(diffHr / 24);
+
+  if (diffDay > 0) return `${diffDay} day${diffDay > 1 ? 's' : ''} ago`;
+  if (diffHr > 0) return `${diffHr} hour${diffHr > 1 ? 's' : ''} ago`;
+  if (diffMin > 0) return `${diffMin} minute${diffMin > 1 ? 's' : ''} ago`;
+  return 'just now';
+};
 
 const notificationIcons = {
   TASK_ASSIGNED: '📋',
@@ -66,16 +80,18 @@ export default function NotificationsPanel() {
             {unreadCount > 0 && (
               <button
                 onClick={handleMarkAllRead}
-                className="text-[11px] text-[#6c8cff] hover:text-white transition-colors"
+                aria-label="Mark all notifications as read"
+                className="text-[11px] text-[#6c8cff] hover:text-white transition-[color] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#6c8cff] rounded"
               >
-                <CheckCheck size={16} />
+                <CheckCheck size={16} aria-hidden="true" />
               </button>
             )}
             <button
               onClick={closeNotificationsPanel}
-              className="text-[#8892a4] hover:text-white transition-colors"
+              aria-label="Close notifications panel"
+              className="text-[#8892a4] hover:text-white transition-[color] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#6c8cff] rounded"
             >
-              <X size={18} />
+              <X size={18} aria-hidden="true" />
             </button>
           </div>
         </div>
@@ -114,7 +130,7 @@ export default function NotificationsPanel() {
                         {notification.message}
                       </p>
                       <p className="text-[10px] text-[#556] mt-1">
-                        {formatDistanceToNow(new Date(notification.createdAt), { addSuffix: true })}
+                        {formatRelativeTime(notification.createdAt)}
                       </p>
                     </div>
                     {!notification.read && (
@@ -140,11 +156,12 @@ export function NotificationBell() {
   return (
     <button
       onClick={openNotificationsPanel}
-      className="relative p-2 text-[#8892a4] hover:text-white transition-colors"
+      aria-label={`Notifications${unreadCount > 0 ? `, ${unreadCount} unread` : ''}`}
+      className="relative p-2 text-[#8892a4] hover:text-white transition-[color] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#6c8cff] rounded"
     >
-      <Bell size={20} />
+      <Bell size={20} aria-hidden="true" />
       {unreadCount > 0 && (
-        <span className="absolute top-0.5 right-0.5 w-4 h-4 bg-[#ef4444] text-white text-[9px] font-bold rounded-full flex items-center justify-center">
+        <span className="absolute top-0.5 right-0.5 w-4 h-4 bg-[#ef4444] text-white text-[9px] font-bold rounded-full flex items-center justify-center" aria-hidden="true">
           {unreadCount > 9 ? '9+' : unreadCount}
         </span>
       )}

@@ -1,6 +1,5 @@
 import useStore from '../store/useStore';
 import { useTasks, useUpdateTaskStatus } from '../hooks/useData';
-import { format } from 'date-fns';
 
 const columns = [
   { key: 'NOT_STARTED', label: 'Not Started', color: '#556' },
@@ -27,7 +26,7 @@ export default function BoardView() {
 
   const formatDate = (date) => {
     if (!date) return '';
-    return format(new Date(date), 'MMM d');
+    return new Intl.DateTimeFormat('en-US', { month: 'short', day: 'numeric' }).format(new Date(date));
   };
 
   if (isLoading) {
@@ -72,7 +71,11 @@ export default function BoardView() {
                     <div
                       key={task.id}
                       onClick={() => openDetail(task.id)}
-                      className={`bg-[#1a2035] border border-[#1e2640] rounded-lg p-3 cursor-pointer transition-all hover:border-[#6c8cff] hover:-translate-y-0.5 hover:shadow-lg active:scale-[0.98] ${
+                      onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); openDetail(task.id); } }}
+                      role="button"
+                      tabIndex={0}
+                      aria-label={`View task: ${task.title}`}
+                      className={`bg-[#1a2035] border border-[#1e2640] rounded-lg p-3 cursor-pointer transition-[border-color,transform,box-shadow] hover:border-[#6c8cff] hover:-translate-y-0.5 hover:shadow-lg active:scale-[0.98] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#6c8cff] ${
                         task.status === 'DONE' ? 'opacity-60' : ''
                       }`}
                     >

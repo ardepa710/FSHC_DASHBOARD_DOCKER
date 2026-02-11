@@ -118,15 +118,22 @@ export default function TaskModal({ isOpen, onClose, defaultPhaseId }) {
   return (
     <>
       <div className="fixed inset-0 bg-black/50 z-[100]" onClick={handleClose} />
-      <div className="fixed inset-4 sm:inset-auto sm:top-1/2 sm:left-1/2 sm:-translate-x-1/2 sm:-translate-y-1/2 w-auto sm:w-[500px] md:w-[560px] sm:max-h-[90vh] bg-[#111827] border border-[#1e2640] rounded-xl z-[101] overflow-hidden flex flex-col">
+      <div
+        className="fixed inset-4 sm:inset-auto sm:top-1/2 sm:left-1/2 sm:-translate-x-1/2 sm:-translate-y-1/2 w-auto sm:w-[500px] md:w-[560px] sm:max-h-[90vh] bg-[#111827] border border-[#1e2640] rounded-xl z-[101] overflow-hidden flex flex-col"
+        style={{ overscrollBehavior: 'contain' }}
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="modal-title"
+      >
         {/* Header */}
         <div className="p-3 sm:p-4 border-b border-[#1e2640] flex items-center justify-between">
-          <h2 className="text-base sm:text-lg font-semibold text-white">Create New Task</h2>
+          <h2 id="modal-title" className="text-base sm:text-lg font-semibold text-white">Create New Task</h2>
           <button
             onClick={handleClose}
-            className="w-8 h-8 rounded-md bg-[#1a2035] border border-[#1e2640] text-[#8892a4] hover:text-white hover:border-[#6c8cff] flex items-center justify-center transition-all"
+            aria-label="Close modal"
+            className="w-8 h-8 rounded-md bg-[#1a2035] border border-[#1e2640] text-[#8892a4] hover:text-white hover:border-[#6c8cff] flex items-center justify-center transition-[border-color,color] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#6c8cff]"
           >
-            <X size={16} />
+            <X size={16} aria-hidden="true" />
           </button>
         </div>
 
@@ -140,42 +147,54 @@ export default function TaskModal({ isOpen, onClose, defaultPhaseId }) {
           <form onSubmit={handleSubmit} className="p-3 sm:p-4 overflow-y-auto flex-1">
             {/* Title */}
             <div className="mb-4">
-              <label className="block text-[11px] font-semibold uppercase tracking-wider text-[#556] mb-1.5">
+              <label
+                htmlFor="task-title"
+                className="block text-[11px] font-semibold uppercase tracking-wider text-[#556] mb-1.5"
+              >
                 Title <span className="text-[#ef4444]">*</span>
               </label>
               <input
+                id="task-title"
                 type="text"
                 value={title}
                 onChange={(e) => setTitle(e.target.value)}
                 placeholder="Enter task title..."
-                className="w-full bg-[#1a2035] border border-[#1e2640] rounded-lg py-2 px-3 text-[13px] text-[#e0e0e0] outline-none focus:border-[#6c8cff] transition-colors placeholder:text-[#556]"
+                className="w-full bg-[#1a2035] border border-[#1e2640] rounded-lg py-2 px-3 text-[13px] text-[#e0e0e0] outline-none focus:border-[#6c8cff] focus:ring-2 focus:ring-[#6c8cff]/20 transition-[border-color,box-shadow] placeholder:text-[#556]"
               />
             </div>
 
             {/* Description */}
             <div className="mb-4">
-              <label className="block text-[11px] font-semibold uppercase tracking-wider text-[#556] mb-1.5">
+              <label
+                htmlFor="task-description"
+                className="block text-[11px] font-semibold uppercase tracking-wider text-[#556] mb-1.5"
+              >
                 Description
               </label>
               <textarea
+                id="task-description"
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
                 placeholder="Enter task description..."
                 rows={3}
-                className="w-full bg-[#1a2035] border border-[#1e2640] rounded-lg py-2 px-3 text-[13px] text-[#e0e0e0] outline-none focus:border-[#6c8cff] transition-colors placeholder:text-[#556] resize-none"
+                className="w-full bg-[#1a2035] border border-[#1e2640] rounded-lg py-2 px-3 text-[13px] text-[#e0e0e0] outline-none focus:border-[#6c8cff] focus:ring-2 focus:ring-[#6c8cff]/20 transition-[border-color,box-shadow] placeholder:text-[#556] resize-none"
               />
             </div>
 
             {/* Phase & Assignee */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4 mb-4">
               <div>
-                <label className="block text-[11px] font-semibold uppercase tracking-wider text-[#556] mb-1.5">
+                <label
+                  htmlFor="task-phase"
+                  className="block text-[11px] font-semibold uppercase tracking-wider text-[#556] mb-1.5"
+                >
                   Phase <span className="text-[#ef4444]">*</span>
                 </label>
                 <select
+                  id="task-phase"
                   value={phaseId}
                   onChange={(e) => setPhaseId(e.target.value)}
-                  className="w-full bg-[#1a2035] border border-[#1e2640] rounded-lg py-2 px-3 text-[13px] text-[#e0e0e0] outline-none focus:border-[#6c8cff] transition-colors"
+                  className="w-full bg-[#1a2035] border border-[#1e2640] rounded-lg py-2 px-3 text-[13px] text-[#e0e0e0] outline-none focus:border-[#6c8cff] focus:ring-2 focus:ring-[#6c8cff]/20 transition-[border-color,box-shadow]"
                 >
                   <option value="">Select phase...</option>
                   {phases.map((phase) => (
@@ -186,13 +205,17 @@ export default function TaskModal({ isOpen, onClose, defaultPhaseId }) {
                 </select>
               </div>
               <div>
-                <label className="block text-[11px] font-semibold uppercase tracking-wider text-[#556] mb-1.5">
+                <label
+                  htmlFor="task-assignee"
+                  className="block text-[11px] font-semibold uppercase tracking-wider text-[#556] mb-1.5"
+                >
                   Assignee
                 </label>
                 <select
+                  id="task-assignee"
                   value={assigneeId}
                   onChange={(e) => setAssigneeId(e.target.value)}
-                  className="w-full bg-[#1a2035] border border-[#1e2640] rounded-lg py-2 px-3 text-[13px] text-[#e0e0e0] outline-none focus:border-[#6c8cff] transition-colors"
+                  className="w-full bg-[#1a2035] border border-[#1e2640] rounded-lg py-2 px-3 text-[13px] text-[#e0e0e0] outline-none focus:border-[#6c8cff] focus:ring-2 focus:ring-[#6c8cff]/20 transition-[border-color,box-shadow]"
                 >
                   <option value="">Unassigned</option>
                   {assignees.map((assignee) => (
@@ -207,13 +230,17 @@ export default function TaskModal({ isOpen, onClose, defaultPhaseId }) {
             {/* Priority & Due Date */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4 mb-4">
               <div>
-                <label className="block text-[11px] font-semibold uppercase tracking-wider text-[#556] mb-1.5">
+                <label
+                  htmlFor="task-priority"
+                  className="block text-[11px] font-semibold uppercase tracking-wider text-[#556] mb-1.5"
+                >
                   Priority
                 </label>
                 <select
+                  id="task-priority"
                   value={priority}
                   onChange={(e) => setPriority(e.target.value)}
-                  className="w-full bg-[#1a2035] border border-[#1e2640] rounded-lg py-2 px-3 text-[13px] text-[#e0e0e0] outline-none focus:border-[#6c8cff] transition-colors"
+                  className="w-full bg-[#1a2035] border border-[#1e2640] rounded-lg py-2 px-3 text-[13px] text-[#e0e0e0] outline-none focus:border-[#6c8cff] focus:ring-2 focus:ring-[#6c8cff]/20 transition-[border-color,box-shadow]"
                 >
                   <option value="LOW">Low</option>
                   <option value="MEDIUM">Medium</option>
@@ -221,25 +248,33 @@ export default function TaskModal({ isOpen, onClose, defaultPhaseId }) {
                 </select>
               </div>
               <div>
-                <label className="block text-[11px] font-semibold uppercase tracking-wider text-[#556] mb-1.5">
+                <label
+                  htmlFor="task-duedate"
+                  className="block text-[11px] font-semibold uppercase tracking-wider text-[#556] mb-1.5"
+                >
                   Due Date
                 </label>
                 <input
+                  id="task-duedate"
                   type="date"
                   value={dueDate}
                   onChange={(e) => setDueDate(e.target.value)}
-                  className="w-full bg-[#1a2035] border border-[#1e2640] rounded-lg py-2 px-3 text-[13px] text-[#e0e0e0] outline-none focus:border-[#6c8cff] transition-colors"
+                  className="w-full bg-[#1a2035] border border-[#1e2640] rounded-lg py-2 px-3 text-[13px] text-[#e0e0e0] outline-none focus:border-[#6c8cff] focus:ring-2 focus:ring-[#6c8cff]/20 transition-[border-color,box-shadow]"
                 />
               </div>
             </div>
 
             {/* Subtasks */}
             <div className="mb-4">
-              <label className="block text-[11px] font-semibold uppercase tracking-wider text-[#556] mb-1.5">
+              <label
+                htmlFor="task-subtask"
+                className="block text-[11px] font-semibold uppercase tracking-wider text-[#556] mb-1.5"
+              >
                 Subtasks
               </label>
               <div className="flex gap-2 mb-2">
                 <input
+                  id="task-subtask"
                   type="text"
                   value={newSubtask}
                   onChange={(e) => setNewSubtask(e.target.value)}
@@ -250,20 +285,21 @@ export default function TaskModal({ isOpen, onClose, defaultPhaseId }) {
                     }
                   }}
                   placeholder="Add a subtask..."
-                  className="flex-1 bg-[#1a2035] border border-[#1e2640] rounded-lg py-2 px-3 text-[13px] text-[#e0e0e0] outline-none focus:border-[#6c8cff] transition-colors placeholder:text-[#556]"
+                  className="flex-1 bg-[#1a2035] border border-[#1e2640] rounded-lg py-2 px-3 text-[13px] text-[#e0e0e0] outline-none focus:border-[#6c8cff] focus:ring-2 focus:ring-[#6c8cff]/20 transition-[border-color,box-shadow] placeholder:text-[#556]"
                 />
                 <button
                   type="button"
                   onClick={addSubtask}
-                  className="px-3 py-2 bg-[#6c8cff] text-white rounded-lg text-[13px] font-semibold hover:brightness-110 transition-all"
+                  aria-label="Add subtask"
+                  className="px-3 py-2 bg-[#6c8cff] text-white rounded-lg text-[13px] font-semibold hover:brightness-110 transition-[filter] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#6c8cff] focus-visible:ring-offset-2 focus-visible:ring-offset-[#111827]"
                 >
-                  <Plus size={16} />
+                  <Plus size={16} aria-hidden="true" />
                 </button>
               </div>
               {subtasks.length > 0 && (
-                <div className="space-y-1">
+                <ul className="space-y-1" aria-label="Subtasks list">
                   {subtasks.map((subtask, index) => (
-                    <div
+                    <li
                       key={index}
                       className="flex items-center gap-2 bg-[#1a2035] border border-[#1e2640] rounded-lg py-2 px-3"
                     >
@@ -271,13 +307,14 @@ export default function TaskModal({ isOpen, onClose, defaultPhaseId }) {
                       <button
                         type="button"
                         onClick={() => removeSubtask(index)}
-                        className="text-[#556] hover:text-[#ef4444] transition-colors"
+                        aria-label={`Remove subtask: ${subtask}`}
+                        className="text-[#556] hover:text-[#ef4444] transition-[color] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#ef4444] rounded"
                       >
-                        <Trash2 size={14} />
+                        <Trash2 size={14} aria-hidden="true" />
                       </button>
-                    </div>
+                    </li>
                   ))}
-                </div>
+                </ul>
               )}
             </div>
           </form>

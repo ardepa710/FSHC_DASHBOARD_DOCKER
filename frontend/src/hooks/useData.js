@@ -685,12 +685,37 @@ export function useTaskCustomValues(taskId) {
   });
 }
 
+// Alias for useTaskCustomValues
+export function useTaskCustomFieldValues(taskId) {
+  return useTaskCustomValues(taskId);
+}
+
 export function useSetCustomValue() {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: ({ taskId, fieldId, value }) => api.setCustomFieldValue(taskId, fieldId, value),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['customValues'] });
+    },
+  });
+}
+
+export function useSetCustomFieldValue() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: ({ taskId, customFieldId, value }) => api.setCustomFieldValue(taskId, customFieldId, value),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['customValues'] });
+    },
+  });
+}
+
+export function useUpdateCustomField() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: ({ id, data }) => api.updateCustomField(id, data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['customFields'] });
     },
   });
 }
@@ -774,12 +799,22 @@ export function useRecurringConfig(taskId) {
   });
 }
 
+export function useRecurringTasks() {
+  const projectId = useProjectId();
+  return useQuery({
+    queryKey: ['recurringTasks', projectId],
+    queryFn: () => api.getProjectRecurringTasks(projectId).then(res => res.data),
+    enabled: !!projectId,
+  });
+}
+
 export function useSetRecurringConfig() {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: ({ taskId, data }) => api.setRecurringConfig(taskId, data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['recurringConfig'] });
+      queryClient.invalidateQueries({ queryKey: ['recurringTasks'] });
     },
   });
 }
@@ -790,6 +825,7 @@ export function useDeleteRecurringConfig() {
     mutationFn: (taskId) => api.deleteRecurringConfig(taskId),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['recurringConfig'] });
+      queryClient.invalidateQueries({ queryKey: ['recurringTasks'] });
     },
   });
 }
@@ -844,5 +880,132 @@ export function useTagAnalytics() {
     queryKey: ['tagAnalytics', projectId],
     queryFn: () => api.getTagAnalytics(projectId).then(res => res.data),
     enabled: !!projectId,
+  });
+}
+
+// ============ EXPORT/IMPORT ============
+export function useExportTasksJson() {
+  const projectId = useProjectId();
+  return useMutation({
+    mutationFn: (params) => api.exportTasksJson({ projectId, ...params }),
+  });
+}
+
+export function useExportTasksCsv() {
+  const projectId = useProjectId();
+  return useMutation({
+    mutationFn: (params) => api.exportTasksCsv({ projectId, ...params }),
+  });
+}
+
+export function useImportTasks() {
+  const queryClient = useQueryClient();
+  const projectId = useProjectId();
+  return useMutation({
+    mutationFn: (data) => api.importTasks({ ...data, projectId }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['tasks'] });
+    },
+  });
+}
+
+// ============ FILTER PRESETS ============
+export function useFilterPresets() {
+  const projectId = useProjectId();
+  return useQuery({
+    queryKey: ['filterPresets', projectId],
+    queryFn: () => api.getFilterPresets(projectId).then(res => res.data),
+    enabled: !!projectId,
+  });
+}
+
+export function useCreateFilterPreset() {
+  const queryClient = useQueryClient();
+  const projectId = useProjectId();
+  return useMutation({
+    mutationFn: (data) => api.createFilterPreset({ ...data, projectId }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['filterPresets'] });
+    },
+  });
+}
+
+export function useUpdateFilterPreset() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: ({ id, data }) => api.updateFilterPreset(id, data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['filterPresets'] });
+    },
+  });
+}
+
+export function useDeleteFilterPreset() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (id) => api.deleteFilterPreset(id),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['filterPresets'] });
+    },
+  });
+}
+
+export function useSetDefaultFilterPreset() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (id) => api.setDefaultFilterPreset(id),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['filterPresets'] });
+    },
+  });
+}
+
+// ============ USER SETTINGS ============
+export function useUserSettings() {
+  const token = useStore(state => state.token);
+  return useQuery({
+    queryKey: ['userSettings'],
+    queryFn: () => api.getUserSettings().then(res => res.data),
+    enabled: !!token,
+  });
+}
+
+export function useUpdateSettings() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (data) => api.updateUserSettings(data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['userSettings'] });
+    },
+  });
+}
+
+export function useUpdateTheme() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (theme) => api.updateTheme(theme),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['userSettings'] });
+    },
+  });
+}
+
+export function useToggleKeyboardShortcuts() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (enabled) => api.updateUserSettings({ keyboardShortcuts: enabled }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['userSettings'] });
+    },
+  });
+}
+
+export function useUpdateEmailSettings() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (data) => api.updateEmailSettings(data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['userSettings'] });
+    },
   });
 }

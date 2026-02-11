@@ -23,6 +23,9 @@ const bulkRoutes = require('./routes/bulk');
 const attachmentsRoutes = require('./routes/attachments');
 const recurringRoutes = require('./routes/recurring');
 const reportsRoutes = require('./routes/reports');
+const exportRoutes = require('./routes/export');
+const filterPresetsRoutes = require('./routes/filterPresets');
+const settingsRoutes = require('./routes/settings');
 
 const app = express();
 const PORT = process.env.PORT || 3001;
@@ -56,6 +59,9 @@ app.use('/api/bulk', bulkRoutes);
 app.use('/api/attachments', attachmentsRoutes);
 app.use('/api/recurring', recurringRoutes);
 app.use('/api/reports', reportsRoutes);
+app.use('/api/export', exportRoutes);
+app.use('/api/filter-presets', filterPresetsRoutes);
+app.use('/api/settings', settingsRoutes);
 
 // Health check
 app.get('/api/health', (req, res) => {

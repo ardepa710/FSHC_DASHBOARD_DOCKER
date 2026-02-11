@@ -1,8 +1,9 @@
-import { Search, SlidersHorizontal, Plus, Menu, LayoutList, Columns3, Calendar, CalendarDays } from 'lucide-react';
+import { Search, SlidersHorizontal, Plus, Menu, LayoutList, Columns3, Calendar } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import useStore from '../store/useStore';
 import { usePhases } from '../hooks/useData';
 import { NotificationBell } from './NotificationsPanel';
+import FilterPresetsDropdown from './FilterPresetsDropdown';
 
 export default function TopBar({ onMenuClick }) {
   const {
@@ -59,7 +60,7 @@ export default function TopBar({ onMenuClick }) {
         <h2 className="text-base font-bold text-white flex-1 truncate">{title}</h2>
         <button
           onClick={openCreateModal}
-          className="w-9 h-9 rounded-lg bg-[#6c8cff] text-white flex items-center justify-center hover:brightness-110 transition-all"
+          className="w-9 h-9 rounded-lg bg-[#6c8cff] text-white flex items-center justify-center hover:brightness-110 transition-[filter]"
         >
           <Plus size={20} />
         </button>
@@ -76,7 +77,7 @@ export default function TopBar({ onMenuClick }) {
             <button
               key={view.id}
               onClick={() => setCurrentView(view.id)}
-              className={`px-3 sm:px-4 py-1.5 sm:py-2 text-[11px] sm:text-[12px] font-semibold rounded-md transition-all flex items-center gap-1.5 ${
+              className={`px-3 sm:px-4 py-1.5 sm:py-2 text-[11px] sm:text-[12px] font-semibold rounded-md transition-[background-color,color] flex items-center gap-1.5 ${
                 currentView === view.id
                   ? 'bg-[#253050] text-white'
                   : 'text-[#8892a4] hover:text-white'
@@ -102,15 +103,19 @@ export default function TopBar({ onMenuClick }) {
             placeholder="Search tasks..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="bg-[#1a2035] border border-[#1e2640] rounded-lg py-2 pl-9 pr-3 text-[12px] text-[#e0e0e0] w-[160px] md:w-[200px] lg:w-[240px] outline-none focus:border-[#6c8cff] transition-colors placeholder:text-[#556]"
+            data-search-input
+            className="bg-[#1a2035] border border-[#1e2640] rounded-lg py-2 pl-9 pr-3 text-[12px] text-[#e0e0e0] w-[160px] md:w-[200px] lg:w-[240px] outline-none focus:border-[#6c8cff] transition-[border-color] placeholder:text-[#556]"
           />
         </div>
+
+        {/* Filter Presets */}
+        <FilterPresetsDropdown />
 
         {/* Filter */}
         <div className="relative filter-container">
           <button
             onClick={() => setShowFilters(!showFilters)}
-            className="flex items-center gap-1.5 bg-[#1a2035] border border-[#1e2640] rounded-lg px-3 py-2 text-[12px] text-[#8892a4] hover:border-[#6c8cff] hover:text-white transition-all"
+            className="flex items-center gap-1.5 bg-[#1a2035] border border-[#1e2640] rounded-lg px-3 py-2 text-[12px] text-[#8892a4] hover:border-[#6c8cff] hover:text-white transition-[border-color,color]"
           >
             <SlidersHorizontal size={14} />
             <span className="hidden sm:inline">Filter</span>
@@ -124,7 +129,7 @@ export default function TopBar({ onMenuClick }) {
               {statuses.map((status) => (
                 <label
                   key={status.key}
-                  className="flex items-center gap-2.5 px-2 py-2 text-[12px] text-[#8892a4] hover:bg-[#1a2035] hover:text-white rounded-md cursor-pointer transition-colors"
+                  className="flex items-center gap-2.5 px-2 py-2 text-[12px] text-[#8892a4] hover:bg-[#1a2035] hover:text-white rounded-md cursor-pointer transition-[background-color,color]"
                 >
                   <input
                     type="checkbox"
@@ -145,7 +150,7 @@ export default function TopBar({ onMenuClick }) {
         {/* Create Task Button - Desktop only */}
         <button
           onClick={openCreateModal}
-          className="hidden lg:flex items-center gap-2 bg-[#6c8cff] text-white rounded-lg px-4 py-2 text-[12px] font-semibold hover:brightness-110 transition-all"
+          className="hidden lg:flex items-center gap-2 bg-[#6c8cff] text-white rounded-lg px-4 py-2 text-[12px] font-semibold hover:brightness-110 transition-[filter]"
         >
           <Plus size={16} />
           New Task
@@ -163,7 +168,8 @@ export default function TopBar({ onMenuClick }) {
           placeholder="Search tasks..."
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
-          className="w-full bg-[#1a2035] border border-[#1e2640] rounded-lg py-2.5 pl-9 pr-3 text-[13px] text-[#e0e0e0] outline-none focus:border-[#6c8cff] transition-colors placeholder:text-[#556]"
+          data-search-input
+          className="w-full bg-[#1a2035] border border-[#1e2640] rounded-lg py-2.5 pl-9 pr-3 text-[13px] text-[#e0e0e0] outline-none focus:border-[#6c8cff] transition-[border-color] placeholder:text-[#556]"
         />
       </div>
     </header>

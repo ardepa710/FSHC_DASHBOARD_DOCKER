@@ -1,7 +1,10 @@
 import { useState, useEffect } from 'react';
 import { Clock, Play, Square, Plus } from 'lucide-react';
-import { format } from 'date-fns';
 import toast from 'react-hot-toast';
+
+const formatEntryDate = (date) => {
+  return new Intl.DateTimeFormat('en-US', { month: 'short', day: 'numeric' }).format(new Date(date));
+};
 import {
   useTimeEntries,
   useActiveTimer,
@@ -244,7 +247,7 @@ export default function TimeTrackerWidget({ taskId }) {
                 )}
               </div>
               <span className="text-[#556] text-[10px]">
-                {format(new Date(entry.startTime), 'MMM d')}
+                {formatEntryDate(entry.startTime)}
               </span>
             </div>
           ))}

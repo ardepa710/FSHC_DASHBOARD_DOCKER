@@ -1,6 +1,8 @@
 @import "tailwindcss";
 
-:root {
+/* Dark theme (default) */
+:root,
+.theme-dark {
   --bg0: #0a0e1a;
   --bg1: #111827;
   --bg2: #1a2035;
@@ -10,6 +12,25 @@
   --text2: #8892a4;
   --text3: #556;
   --blue: #6c8cff;
+  --green: #10b981;
+  --amber: #f59e0b;
+  --red: #ef4444;
+  --purple: #8b5cf6;
+  --pink: #ec4899;
+  --teal: #14b8a6;
+}
+
+/* Light theme */
+.theme-light {
+  --bg0: #f8fafc;
+  --bg1: #ffffff;
+  --bg2: #f1f5f9;
+  --bg3: #e2e8f0;
+  --border: #cbd5e1;
+  --text: #1e293b;
+  --text2: #64748b;
+  --text3: #94a3b8;
+  --blue: #3b82f6;
   --green: #10b981;
   --amber: #f59e0b;
   --red: #ef4444;
@@ -30,6 +51,52 @@ body {
   color: var(--text);
   height: 100vh;
   overflow: hidden;
+}
+
+/* Theme overrides for hardcoded colors */
+.theme-light .bg-\[\#0a0f1c\],
+.theme-light .bg-\[\#0a0e1a\] {
+  background-color: var(--bg0) !important;
+}
+
+.theme-light .bg-\[\#111827\] {
+  background-color: var(--bg1) !important;
+}
+
+.theme-light .bg-\[\#1a2035\] {
+  background-color: var(--bg2) !important;
+}
+
+.theme-light .bg-\[\#253050\] {
+  background-color: var(--bg3) !important;
+}
+
+.theme-light .border-\[\#1e2640\] {
+  border-color: var(--border) !important;
+}
+
+.theme-light .text-\[\#e0e0e0\],
+.theme-light .text-white {
+  color: var(--text) !important;
+}
+
+.theme-light .text-\[\#8892a4\] {
+  color: var(--text2) !important;
+}
+
+.theme-light .text-\[\#556\] {
+  color: var(--text3) !important;
+}
+
+/* Light theme specific fixes */
+.theme-light aside,
+.theme-light header,
+.theme-light main {
+  background-color: var(--bg1);
+}
+
+.theme-light .shadow-xl {
+  box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
 }
 
 #root {

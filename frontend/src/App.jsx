@@ -6,6 +6,7 @@ import ListView from './components/ListView';
 import BoardView from './components/BoardView';
 import TimelineView from './components/TimelineView';
 import CalendarView from './components/CalendarView';
+import GanttView from './components/GanttView';
 import MyTasksView from './components/MyTasksView';
 import ReportsView from './components/ReportsView';
 import TaskDetail from './components/TaskDetail';
@@ -15,28 +16,54 @@ import ProjectSelector from './components/ProjectSelector';
 import UserManagement from './components/UserManagement';
 import NotificationsPanel from './components/NotificationsPanel';
 import BulkActionsBar from './components/BulkActionsBar';
+import KeyboardShortcutsModal, { useKeyboardShortcuts } from './components/KeyboardShortcuts';
+import { ThemeProvider } from './components/ThemeProvider';
+import ActivityLogPanel from './components/ActivityLogPanel';
+import ExportImportModal from './components/ExportImportModal';
+import TemplatesPanel from './components/TemplatesPanel';
+import SettingsPanel from './components/SettingsPanel';
+import RecurringTaskConfig from './components/RecurringTaskConfig';
 import useStore from './store/useStore';
 
 function Dashboard() {
-  const { currentView, closeDetail, isCreateModalOpen, closeCreateModal, currentPhaseFilter } = useStore();
+  const {
+    currentView,
+    closeDetail,
+    isCreateModalOpen,
+    closeCreateModal,
+    isTaskModalOpen,
+    closeTaskModal,
+    currentPhaseFilter,
+    isActivityLogOpen,
+    closeActivityLog,
+    isExportImportOpen,
+    closeExportImport,
+    isTemplatesPanelOpen,
+    closeTemplatesPanel,
+    isSettingsPanelOpen,
+    closeSettingsPanel,
+    isRecurringPanelOpen,
+    closeRecurringPanel,
+  } = useStore();
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
-  // Keyboard shortcuts
+  // Use keyboard shortcuts hook
+  useKeyboardShortcuts();
+
+  // Legacy keyboard shortcuts for sidebar
   useEffect(() => {
     const handleKeyDown = (e) => {
       if (e.key === 'Escape') {
-        closeDetail();
-        closeCreateModal();
         setSidebarOpen(false);
       }
       if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
         e.preventDefault();
-        document.querySelector('input[type="text"]')?.focus();
+        document.querySelector('[data-search-input]')?.focus();
       }
     };
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [closeDetail, closeCreateModal]);
+  }, []);
 
   // Close sidebar on route change (mobile)
   useEffect(() => {
@@ -69,24 +96,31 @@ function Dashboard() {
           {currentView === 'board' && <BoardView />}
           {currentView === 'timeline' && <TimelineView />}
           {currentView === 'calendar' && <CalendarView />}
-          {currentView === 'mytasks' && <MyTasksView />}
+          {currentView === 'gantt' && <GanttView />}
+          {currentView === 'myTasks' && <MyTasksView />}
           {currentView === 'reports' && <ReportsView />}
         </div>
       </main>
 
       <TaskDetail />
       <TaskModal
-        isOpen={isCreateModalOpen}
-        onClose={closeCreateModal}
+        isOpen={isCreateModalOpen || isTaskModalOpen}
+        onClose={() => { closeCreateModal(); closeTaskModal(); }}
         defaultPhaseId={currentPhaseFilter !== 'all' ? currentPhaseFilter : undefined}
       />
       <NotificationsPanel />
       <BulkActionsBar />
+      <KeyboardShortcutsModal />
+      <ActivityLogPanel isOpen={isActivityLogOpen} onClose={closeActivityLog} />
+      <ExportImportModal isOpen={isExportImportOpen} onClose={closeExportImport} />
+      <TemplatesPanel isOpen={isTemplatesPanelOpen} onClose={closeTemplatesPanel} />
+      <SettingsPanel isOpen={isSettingsPanelOpen} onClose={closeSettingsPanel} />
+      <RecurringTaskConfig isOpen={isRecurringPanelOpen} onClose={closeRecurringPanel} />
     </div>
   );
 }
 
-function App() {
+function AppContent() {
   const { isAuthenticated, currentProject, user } = useStore();
   const [showUserManagement, setShowUserManagement] = useState(false);
 
@@ -107,6 +141,14 @@ function App() {
 
   // Show dashboard
   return <Dashboard />;
+}
+
+function App() {
+  return (
+    <ThemeProvider>
+      <AppContent />
+    </ThemeProvider>
+  );
 }
 
 export default App;

@@ -1,7 +1,6 @@
 import { ChevronDown, Check, ChevronRight, Square, CheckSquare } from 'lucide-react';
 import useStore from '../store/useStore';
 import { useTasks, usePhases, useUpdateTaskStatus } from '../hooks/useData';
-import { format } from 'date-fns';
 import clsx from 'clsx';
 
 const statusLabels = {
@@ -72,7 +71,7 @@ export default function ListView() {
 
   const formatDueDate = (date) => {
     if (!date) return '';
-    return format(new Date(date), 'MMM d');
+    return new Intl.DateTimeFormat('en-US', { month: 'short', day: 'numeric' }).format(new Date(date));
   };
 
   const getDueClass = (date) => {
@@ -151,8 +150,10 @@ export default function ListView() {
             <div key={phase.id} className="mb-6">
               {/* Phase Header */}
               <button
-                className="w-full flex items-center gap-2 sm:gap-3 py-3 cursor-pointer select-none hover:bg-[#111827]/50 rounded-lg px-2 -mx-2 transition-colors"
+                className="w-full flex items-center gap-2 sm:gap-3 py-3 cursor-pointer select-none hover:bg-[#111827]/50 rounded-lg px-2 -mx-2 transition-[background-color] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#6c8cff] focus-visible:ring-inset"
                 onClick={() => togglePhaseCollapse(phase.id)}
+                aria-expanded={!isCollapsed}
+                aria-label={`${phase.name} phase, ${phaseTasks.length} tasks, ${isCollapsed ? 'expand' : 'collapse'}`}
               >
                 <ChevronDown
                   size={14}
@@ -174,9 +175,9 @@ export default function ListView() {
                 </span>
                 <div className="ml-auto flex items-center gap-2 sm:gap-3 text-[11px] text-[#556] shrink-0">
                   <span className="hidden sm:inline">{doneTasks}/{phaseTasks.length}</span>
-                  <div className="w-16 sm:w-20 h-1.5 bg-[#253050] rounded-full overflow-hidden">
+                  <div className="w-16 sm:w-20 h-1.5 bg-[#253050] rounded-full overflow-hidden" aria-hidden="true">
                     <div
-                      className="h-full rounded-full transition-all"
+                      className="h-full rounded-full transition-[width]"
                       style={{
                         width: `${progress}%`,
                         background: phase.color,
@@ -207,12 +208,13 @@ export default function ListView() {
                                   setSelectedTasks([...new Set([...selectedTasks, ...phaseTaskIds])]);
                                 }
                               }}
-                              className="text-[#556] hover:text-[#6c8cff]"
+                              aria-label={phaseTasks.every(t => selectedTasks.includes(t.id)) ? `Deselect all tasks in ${phase.name}` : `Select all tasks in ${phase.name}`}
+                              className="text-[#556] hover:text-[#6c8cff] transition-[color] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#6c8cff] rounded"
                             >
                               {phaseTasks.length > 0 && phaseTasks.every(t => selectedTasks.includes(t.id)) ? (
-                                <CheckSquare size={16} className="text-[#6c8cff]" />
+                                <CheckSquare size={16} className="text-[#6c8cff]" aria-hidden="true" />
                               ) : (
-                                <Square size={16} />
+                                <Square size={16} aria-hidden="true" />
                               )}
                             </button>
                           </th>
@@ -238,7 +240,7 @@ export default function ListView() {
                           <tr
                             key={task.id}
                             className={clsx(
-                              'hover:bg-[#1a2035] cursor-pointer transition-colors border-b border-[rgba(30,38,64,0.5)]',
+                              'hover:bg-[#1a2035] cursor-pointer transition-[background-color] border-b border-[rgba(30,38,64,0.5)]',
                               selectedTasks.includes(task.id) && 'bg-[rgba(108,140,255,0.08)]'
                             )}
                             onClick={() => openDetail(task.id)}
@@ -249,12 +251,13 @@ export default function ListView() {
                                   e.stopPropagation();
                                   toggleTaskSelection(task.id);
                                 }}
-                                className="text-[#556] hover:text-[#6c8cff]"
+                                aria-label={selectedTasks.includes(task.id) ? `Deselect task: ${task.title}` : `Select task: ${task.title}`}
+                                className="text-[#556] hover:text-[#6c8cff] transition-[color] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#6c8cff] rounded"
                               >
                                 {selectedTasks.includes(task.id) ? (
-                                  <CheckSquare size={16} className="text-[#6c8cff]" />
+                                  <CheckSquare size={16} className="text-[#6c8cff]" aria-hidden="true" />
                                 ) : (
-                                  <Square size={16} />
+                                  <Square size={16} aria-hidden="true" />
                                 )}
                               </button>
                             </td>
@@ -262,14 +265,15 @@ export default function ListView() {
                               <div className="flex items-center gap-3">
                                 <button
                                   onClick={(e) => toggleDone(e, task)}
+                                  aria-label={task.status === 'DONE' ? `Mark "${task.title}" as not done` : `Mark "${task.title}" as done`}
                                   className={clsx(
-                                    'w-5 h-5 rounded-full border-2 flex items-center justify-center shrink-0 transition-all',
+                                    'w-5 h-5 rounded-full border-2 flex items-center justify-center shrink-0 transition-[border-color,background-color,color] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#6c8cff] focus-visible:ring-offset-2 focus-visible:ring-offset-[#0a0f1c]',
                                     task.status === 'DONE'
                                       ? 'border-[#10b981] bg-[#10b981] text-white'
                                       : 'border-[#556] hover:border-[#6c8cff]'
                                   )}
                                 >
-                                  {task.status === 'DONE' && <Check size={12} />}
+                                  {task.status === 'DONE' && <Check size={12} aria-hidden="true" />}
                                 </button>
                                 <span
                                   className={clsx(
@@ -353,20 +357,25 @@ export default function ListView() {
                     {phaseTasks.map((task) => (
                       <div
                         key={task.id}
-                        className="bg-[#111827] border border-[#1e2640] rounded-lg p-3 cursor-pointer hover:border-[#6c8cff] transition-colors"
+                        className="bg-[#111827] border border-[#1e2640] rounded-lg p-3 cursor-pointer hover:border-[#6c8cff] transition-[border-color]"
                         onClick={() => openDetail(task.id)}
+                        role="button"
+                        tabIndex={0}
+                        onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); openDetail(task.id); } }}
+                        aria-label={`View details for task: ${task.title}`}
                       >
                         <div className="flex items-start gap-3">
                           <button
                             onClick={(e) => toggleDone(e, task)}
+                            aria-label={task.status === 'DONE' ? `Mark "${task.title}" as not done` : `Mark "${task.title}" as done`}
                             className={clsx(
-                              'w-5 h-5 rounded-full border-2 flex items-center justify-center shrink-0 mt-0.5 transition-all',
+                              'w-5 h-5 rounded-full border-2 flex items-center justify-center shrink-0 mt-0.5 transition-[border-color,background-color,color] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#6c8cff] focus-visible:ring-offset-2 focus-visible:ring-offset-[#0a0f1c]',
                               task.status === 'DONE'
                                 ? 'border-[#10b981] bg-[#10b981] text-white'
                                 : 'border-[#556] hover:border-[#6c8cff]'
                             )}
                           >
-                            {task.status === 'DONE' && <Check size={12} />}
+                            {task.status === 'DONE' && <Check size={12} aria-hidden="true" />}
                           </button>
                           <div className="flex-1 min-w-0">
                             <p

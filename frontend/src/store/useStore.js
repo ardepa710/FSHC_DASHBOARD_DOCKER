@@ -93,6 +93,47 @@ const useStore = create(
           return { tagFilters: newFilters };
         }),
       clearTagFilters: () => set({ tagFilters: [] }),
+
+      // View management (alias for keyboard shortcuts)
+      setView: (view) => set({ currentView: view }),
+
+      // Task modal for creating tasks (used by keyboard shortcut 'n')
+      isTaskModalOpen: false,
+      openTaskModal: () => set({ isTaskModalOpen: true }),
+      closeTaskModal: () => set({ isTaskModalOpen: false }),
+
+      // Keyboard shortcuts modal
+      isKeyboardShortcutsOpen: false,
+      openKeyboardShortcuts: () => set({ isKeyboardShortcutsOpen: true }),
+      closeKeyboardShortcuts: () => set({ isKeyboardShortcutsOpen: false }),
+
+      // Activity log panel
+      isActivityLogOpen: false,
+      openActivityLog: () => set({ isActivityLogOpen: true }),
+      closeActivityLog: () => set({ isActivityLogOpen: false }),
+
+      // Export/Import modal
+      isExportImportOpen: false,
+      openExportImport: () => set({ isExportImportOpen: true }),
+      closeExportImport: () => set({ isExportImportOpen: false }),
+
+      // Templates panel
+      isTemplatesPanelOpen: false,
+      openTemplatesPanel: () => set({ isTemplatesPanelOpen: true }),
+      closeTemplatesPanel: () => set({ isTemplatesPanelOpen: false }),
+
+      // Settings panel
+      isSettingsPanelOpen: false,
+      openSettingsPanel: () => set({ isSettingsPanelOpen: true }),
+      closeSettingsPanel: () => set({ isSettingsPanelOpen: false }),
+
+      // Recurring tasks panel
+      isRecurringPanelOpen: false,
+      openRecurringPanel: () => set({ isRecurringPanelOpen: true }),
+      closeRecurringPanel: () => set({ isRecurringPanelOpen: false }),
+
+      // Set filters (used by filter presets)
+      setStatusFilters: (filters) => set({ statusFilters: filters }),
     }),
     {
       name: 'fshc-dashboard-storage',

@@ -1,8 +1,12 @@
 import { User, Clock, AlertTriangle, CheckCircle2, Circle, Pause, Calendar } from 'lucide-react';
-import { format, formatDistanceToNow } from 'date-fns';
 import { useMyTasks } from '../hooks/useData';
 import useStore from '../store/useStore';
 import clsx from 'clsx';
+
+const formatDate = (date) => {
+  if (!date) return '';
+  return new Intl.DateTimeFormat('en-US', { month: 'short', day: 'numeric' }).format(new Date(date));
+};
 
 const statusConfig = {
   NOT_STARTED: { label: 'Not Started', icon: Circle, color: '#556' },
@@ -25,7 +29,11 @@ function TaskCard({ task, openDetail }) {
   return (
     <div
       onClick={() => openDetail(task.id)}
-      className="bg-[#1a2035] border border-[#1e2640] rounded-lg p-4 hover:border-[#6c8cff] cursor-pointer transition-all group"
+      onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); openDetail(task.id); } }}
+      role="button"
+      tabIndex={0}
+      aria-label={`View task: ${task.title}`}
+      className="bg-[#1a2035] border border-[#1e2640] rounded-lg p-4 hover:border-[#6c8cff] cursor-pointer transition-[border-color] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#6c8cff] group"
     >
       <div className="flex items-start gap-3">
         {/* Status Icon */}
@@ -39,7 +47,7 @@ function TaskCard({ task, openDetail }) {
         {/* Content */}
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-2 mb-1">
-            <h3 className="text-[14px] font-medium text-white truncate group-hover:text-[#6c8cff] transition-colors">
+            <h3 className="text-[14px] font-medium text-white truncate group-hover:text-[#6c8cff] transition-[color]">
               {task.title}
             </h3>
             {task.priority === 'HIGH' && (
@@ -64,8 +72,8 @@ function TaskCard({ task, openDetail }) {
                 'flex items-center gap-1',
                 isOverdue && 'text-[#ef4444] font-medium'
               )}>
-                <Calendar size={12} />
-                {format(new Date(task.dueDate), 'MMM d')}
+                <Calendar size={12} aria-hidden="true" />
+                {formatDate(task.dueDate)}
               </span>
             )}
 

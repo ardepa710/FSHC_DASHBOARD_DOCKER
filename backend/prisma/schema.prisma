@@ -387,3 +387,35 @@ enum Priority {
   MEDIUM
   HIGH
 }
+
+// ========== LOW PRIORITY FEATURES ==========
+
+// Filter Presets
+model FilterPreset {
+  id          Int      @id @default(autoincrement())
+  name        String
+  filters     String   // JSON: { phases, statuses, priorities, assignees, tags, search }
+  isDefault   Boolean  @default(false)
+  userId      Int
+  projectId   Int
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@unique([name, userId, projectId])
+}
+
+// User Settings
+model UserSettings {
+  id                    Int      @id @default(autoincrement())
+  userId                Int      @unique
+  theme                 String   @default("dark") // dark, light, system
+  keyboardShortcuts     Boolean  @default(true)
+  emailNotifications    Boolean  @default(false)
+  emailTaskAssigned     Boolean  @default(true)
+  emailTaskCompleted    Boolean  @default(true)
+  emailMentions         Boolean  @default(true)
+  emailDueReminders     Boolean  @default(true)
+  reminderDaysBefore    Int      @default(1)
+  createdAt             DateTime @default(now())
+  updatedAt             DateTime @updatedAt
+}

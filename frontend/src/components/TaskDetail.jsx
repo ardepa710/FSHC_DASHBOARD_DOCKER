@@ -15,8 +15,28 @@ import {
   usePhases,
   useAssignees,
 } from '../hooks/useData';
-import { format, formatDistanceToNow } from 'date-fns';
 import clsx from 'clsx';
+
+const formatDateISO = (date) => {
+  if (!date) return '';
+  const d = new Date(date);
+  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+};
+
+const formatRelativeTime = (date) => {
+  const now = new Date();
+  const then = new Date(date);
+  const diffMs = now - then;
+  const diffSec = Math.floor(diffMs / 1000);
+  const diffMin = Math.floor(diffSec / 60);
+  const diffHr = Math.floor(diffMin / 60);
+  const diffDay = Math.floor(diffHr / 24);
+
+  if (diffDay > 0) return `${diffDay} day${diffDay > 1 ? 's' : ''} ago`;
+  if (diffHr > 0) return `${diffHr} hour${diffHr > 1 ? 's' : ''} ago`;
+  if (diffMin > 0) return `${diffMin} minute${diffMin > 1 ? 's' : ''} ago`;
+  return 'just now';
+};
 import CommentsSection from './CommentsSection';
 import TagsSection from './TagsSection';
 import AttachmentsSection from './AttachmentsSection';
@@ -106,7 +126,7 @@ export default function TaskDetail() {
         phaseId: task.phaseId,
         assigneeId: task.assigneeId || '',
         priority: task.priority,
-        dueDate: task.dueDate ? format(new Date(task.dueDate), 'yyyy-MM-dd') : '',
+        dueDate: task.dueDate ? formatDateISO(task.dueDate) : '',
       });
     }
   }, [task]);
@@ -245,7 +265,7 @@ export default function TaskDetail() {
 
   const formatDate = (date) => {
     if (!date) return 'No date';
-    return format(new Date(date), 'MMM d, yyyy');
+    return new Intl.DateTimeFormat('en-US', { month: 'short', day: 'numeric', year: 'numeric' }).format(new Date(date));
   };
 
   const getDueClass = (date) => {
@@ -691,7 +711,7 @@ export default function TaskDetail() {
                               <span>-</span>
                             </>
                           )}
-                          <span>{formatDistanceToNow(new Date(note.createdAt), { addSuffix: true })}</span>
+                          <span>{formatRelativeTime(note.createdAt)}</span>
                         </div>
                       </div>
                     ))}

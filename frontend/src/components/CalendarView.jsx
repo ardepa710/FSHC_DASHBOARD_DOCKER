@@ -76,29 +76,31 @@ export default function CalendarView() {
       <div className="flex items-center justify-between mb-4">
         <div className="flex items-center gap-3">
           <h2 className="text-xl font-semibold text-white flex items-center gap-2">
-            <CalendarIcon size={22} className="text-[#6c8cff]" />
-            {format(currentDate, 'MMMM yyyy')}
+            <CalendarIcon size={22} className="text-[#6c8cff]" aria-hidden="true" />
+            {new Intl.DateTimeFormat('en-US', { month: 'long', year: 'numeric' }).format(currentDate)}
           </h2>
         </div>
         <div className="flex items-center gap-2">
           <button
             onClick={goToToday}
-            className="px-3 py-1.5 text-[12px] text-[#8892a4] hover:text-white border border-[#1e2640] rounded-lg hover:border-[#6c8cff] transition-colors"
+            className="px-3 py-1.5 text-[12px] text-[#8892a4] hover:text-white border border-[#1e2640] rounded-lg hover:border-[#6c8cff] transition-[color,border-color] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#6c8cff]"
           >
             Today
           </button>
           <div className="flex">
             <button
               onClick={goToPrevMonth}
-              className="p-2 text-[#8892a4] hover:text-white hover:bg-[#1a2035] rounded-l-lg transition-colors"
+              aria-label="Previous month"
+              className="p-2 text-[#8892a4] hover:text-white hover:bg-[#1a2035] rounded-l-lg transition-[color,background-color] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#6c8cff]"
             >
-              <ChevronLeft size={18} />
+              <ChevronLeft size={18} aria-hidden="true" />
             </button>
             <button
               onClick={goToNextMonth}
-              className="p-2 text-[#8892a4] hover:text-white hover:bg-[#1a2035] rounded-r-lg transition-colors"
+              aria-label="Next month"
+              className="p-2 text-[#8892a4] hover:text-white hover:bg-[#1a2035] rounded-r-lg transition-[color,background-color] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#6c8cff]"
             >
-              <ChevronRight size={18} />
+              <ChevronRight size={18} aria-hidden="true" />
             </button>
           </div>
         </div>
@@ -142,7 +144,7 @@ export default function CalendarView() {
                       : 'text-[#e0e0e0]'
                   )}
                 >
-                  {format(day, 'd')}
+                  {new Intl.DateTimeFormat('en-US', { day: 'numeric' }).format(day)}
                 </span>
                 {dayTasks.length > 3 && (
                   <span className="text-[10px] text-[#556]">
@@ -157,7 +159,8 @@ export default function CalendarView() {
                   <button
                     key={task.id}
                     onClick={() => openDetail(task.id)}
-                    className="w-full text-left px-1.5 py-1 rounded text-[10px] truncate hover:brightness-125 transition-all"
+                    aria-label={`View task: ${task.title}`}
+                    className="w-full text-left px-1.5 py-1 rounded text-[10px] truncate hover:brightness-125 transition-[filter] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#6c8cff]"
                     style={{
                       background: `${statusColors[task.status]}20`,
                       color: statusColors[task.status],

@@ -95,9 +95,10 @@ export default function BulkActionsBar() {
           <span className="text-[13px] text-white">selected</span>
           <button
             onClick={clearSelectedTasks}
-            className="ml-1 text-[#8892a4] hover:text-white"
+            aria-label="Clear selection"
+            className="ml-1 text-[#8892a4] hover:text-white transition-[color] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#6c8cff] rounded"
           >
-            <X size={16} />
+            <X size={16} aria-hidden="true" />
           </button>
         </div>
 
@@ -109,9 +110,11 @@ export default function BulkActionsBar() {
               setShowAssigneeMenu(false);
               setShowPhaseMenu(false);
             }}
-            className="flex items-center gap-1.5 px-3 py-1.5 text-[12px] text-[#8892a4] hover:text-white bg-[#253050] rounded-lg hover:bg-[#2d3a5c] transition-colors"
+            aria-expanded={showStatusMenu}
+            aria-haspopup="true"
+            className="flex items-center gap-1.5 px-3 py-1.5 text-[12px] text-[#8892a4] hover:text-white bg-[#253050] rounded-lg hover:bg-[#2d3a5c] transition-[color,background-color] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#6c8cff]"
           >
-            <Flag size={14} />
+            <Flag size={14} aria-hidden="true" />
             Status
           </button>
           {showStatusMenu && (
@@ -138,9 +141,11 @@ export default function BulkActionsBar() {
               setShowStatusMenu(false);
               setShowPhaseMenu(false);
             }}
-            className="flex items-center gap-1.5 px-3 py-1.5 text-[12px] text-[#8892a4] hover:text-white bg-[#253050] rounded-lg hover:bg-[#2d3a5c] transition-colors"
+            aria-expanded={showAssigneeMenu}
+            aria-haspopup="true"
+            className="flex items-center gap-1.5 px-3 py-1.5 text-[12px] text-[#8892a4] hover:text-white bg-[#253050] rounded-lg hover:bg-[#2d3a5c] transition-[color,background-color] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#6c8cff]"
           >
-            <User size={14} />
+            <User size={14} aria-hidden="true" />
             Assignee
           </button>
           {showAssigneeMenu && (
@@ -178,9 +183,11 @@ export default function BulkActionsBar() {
               setShowStatusMenu(false);
               setShowAssigneeMenu(false);
             }}
-            className="flex items-center gap-1.5 px-3 py-1.5 text-[12px] text-[#8892a4] hover:text-white bg-[#253050] rounded-lg hover:bg-[#2d3a5c] transition-colors"
+            aria-expanded={showPhaseMenu}
+            aria-haspopup="true"
+            className="flex items-center gap-1.5 px-3 py-1.5 text-[12px] text-[#8892a4] hover:text-white bg-[#253050] rounded-lg hover:bg-[#2d3a5c] transition-[color,background-color] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#6c8cff]"
           >
-            <Copy size={14} />
+            <Copy size={14} aria-hidden="true" />
             Duplicate
           </button>
           {showPhaseMenu && (
@@ -206,9 +213,10 @@ export default function BulkActionsBar() {
         <button
           onClick={handleDelete}
           disabled={bulkDelete.isPending}
-          className="flex items-center gap-1.5 px-3 py-1.5 text-[12px] text-[#ef4444] hover:text-white bg-[rgba(239,68,68,0.1)] rounded-lg hover:bg-[#ef4444] transition-colors disabled:opacity-50"
+          aria-label={`Delete ${selectedTasks.length} selected tasks`}
+          className="flex items-center gap-1.5 px-3 py-1.5 text-[12px] text-[#ef4444] hover:text-white bg-[rgba(239,68,68,0.1)] rounded-lg hover:bg-[#ef4444] transition-[color,background-color] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#ef4444] disabled:opacity-50"
         >
-          <Trash2 size={14} />
+          <Trash2 size={14} aria-hidden="true" />
           Delete
         </button>
       </div>

@@ -13,10 +13,12 @@ export default function LoginPage() {
 
     if (!username.trim()) {
       toast.error('Username is required');
+      document.getElementById('username')?.focus();
       return;
     }
     if (!password) {
       toast.error('Password is required');
+      document.getElementById('password')?.focus();
       return;
     }
 
@@ -45,34 +47,45 @@ export default function LoginPage() {
         <div className="bg-[#111827] border border-[#1e2640] rounded-xl p-4 sm:p-6">
           <form onSubmit={handleSubmit}>
             <div className="mb-4">
-              <label className="block text-[11px] font-semibold uppercase tracking-wider text-[#556] mb-1.5">
+              <label
+                htmlFor="username"
+                className="block text-[11px] font-semibold uppercase tracking-wider text-[#556] mb-1.5"
+              >
                 Username
               </label>
               <div className="relative">
-                <User size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-[#556]" />
+                <User size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-[#556]" aria-hidden="true" />
                 <input
+                  id="username"
                   type="text"
                   value={username}
                   onChange={(e) => setUsername(e.target.value)}
                   placeholder="Enter username"
-                  className="w-full bg-[#1a2035] border border-[#1e2640] rounded-lg py-2.5 pl-10 pr-3 text-[14px] text-[#e0e0e0] outline-none focus:border-[#6c8cff] transition-colors placeholder:text-[#556]"
+                  autoComplete="username"
+                  className="w-full bg-[#1a2035] border border-[#1e2640] rounded-lg py-2.5 pl-10 pr-3 text-[14px] text-[#e0e0e0] outline-none focus:border-[#6c8cff] focus:ring-2 focus:ring-[#6c8cff]/20 transition-[border-color,box-shadow] placeholder:text-[#556]"
                   autoFocus
                 />
               </div>
             </div>
 
             <div className="mb-6">
-              <label className="block text-[11px] font-semibold uppercase tracking-wider text-[#556] mb-1.5">
+              <label
+                htmlFor="password"
+                className="block text-[11px] font-semibold uppercase tracking-wider text-[#556] mb-1.5"
+              >
                 Password
               </label>
               <div className="relative">
-                <Lock size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-[#556]" />
+                <Lock size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-[#556]" aria-hidden="true" />
                 <input
+                  id="password"
                   type="password"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   placeholder="Enter password"
-                  className="w-full bg-[#1a2035] border border-[#1e2640] rounded-lg py-2.5 pl-10 pr-3 text-[14px] text-[#e0e0e0] outline-none focus:border-[#6c8cff] transition-colors placeholder:text-[#556]"
+                  autoComplete="current-password"
+                  spellCheck="false"
+                  className="w-full bg-[#1a2035] border border-[#1e2640] rounded-lg py-2.5 pl-10 pr-3 text-[14px] text-[#e0e0e0] outline-none focus:border-[#6c8cff] focus:ring-2 focus:ring-[#6c8cff]/20 transition-[border-color,box-shadow] placeholder:text-[#556]"
                 />
               </div>
             </div>

@@ -11,7 +11,6 @@ import {
   Pause,
   Circle,
 } from 'lucide-react';
-import { format } from 'date-fns';
 import {
   useProjectOverview,
   useWorkload,
@@ -59,9 +58,9 @@ function StatCard({ label, value, icon: Icon, color, subtext }) {
 function ProgressBar({ value, max, color }) {
   const percentage = max > 0 ? (value / max) * 100 : 0;
   return (
-    <div className="h-2 bg-[#253050] rounded-full overflow-hidden">
+    <div className="h-2 bg-[#253050] rounded-full overflow-hidden" aria-hidden="true">
       <div
-        className="h-full rounded-full transition-all duration-500"
+        className="h-full rounded-full transition-[width] duration-500"
         style={{ width: `${percentage}%`, background: color }}
       />
     </div>
@@ -180,29 +179,30 @@ function WorkloadChart({ workload }) {
 function TrendChart({ trend }) {
   const data = trend?.trend || [];
   const maxValue = Math.max(...data.map(d => d.completed), 1);
+  const dateFormatter = new Intl.DateTimeFormat('en-US', { month: 'short', day: 'numeric' });
 
   return (
     <div className="bg-[#1a2035] border border-[#1e2640] rounded-xl p-4">
       <h3 className="text-[13px] font-semibold text-white mb-4 flex items-center gap-2">
-        <Calendar size={16} className="text-[#6c8cff]" />
+        <Calendar size={16} className="text-[#6c8cff]" aria-hidden="true" />
         Completion Trend (30 days)
       </h3>
-      <div className="h-32 flex items-end gap-1">
+      <div className="h-32 flex items-end gap-1" role="img" aria-label="Completion trend chart">
         {data.slice(-30).map((day, idx) => (
           <div
             key={idx}
-            className="flex-1 bg-[#6c8cff] rounded-t hover:brightness-125 transition-all min-w-[6px]"
+            className="flex-1 bg-[#6c8cff] rounded-t hover:brightness-125 transition-[filter] min-w-[6px]"
             style={{
               height: `${maxValue > 0 ? (day.completed / maxValue) * 100 : 0}%`,
               minHeight: day.completed > 0 ? '4px' : '0px',
             }}
-            title={`${format(new Date(day.date), 'MMM d')}: ${day.completed} completed`}
+            title={`${dateFormatter.format(new Date(day.date))}: ${day.completed} completed`}
           />
         ))}
       </div>
       <div className="flex justify-between mt-2 text-[10px] text-[#556]">
-        <span>{data.length > 0 ? format(new Date(data[0]?.date), 'MMM d') : ''}</span>
-        <span>{data.length > 0 ? format(new Date(data[data.length - 1]?.date), 'MMM d') : ''}</span>
+        <span>{data.length > 0 ? dateFormatter.format(new Date(data[0]?.date)) : ''}</span>
+        <span>{data.length > 0 ? dateFormatter.format(new Date(data[data.length - 1]?.date)) : ''}</span>
       </div>
     </div>
   );

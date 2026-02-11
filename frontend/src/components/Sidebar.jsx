@@ -1,4 +1,22 @@
-import { LayoutList, Columns3, Calendar, Circle, ChevronLeft, LogOut, X, User, BarChart3, CalendarDays } from 'lucide-react';
+import {
+  LayoutList,
+  Columns3,
+  Calendar,
+  Circle,
+  ChevronLeft,
+  LogOut,
+  X,
+  User,
+  BarChart3,
+  CalendarDays,
+  GanttChart,
+  FileText,
+  RefreshCw,
+  Activity,
+  Download,
+  Settings,
+  Keyboard,
+} from 'lucide-react';
 import useStore from '../store/useStore';
 import { usePhases, useProjectStats } from '../hooks/useData';
 import toast from 'react-hot-toast';
@@ -12,7 +30,13 @@ export default function Sidebar({ onClose }) {
     currentProject,
     setCurrentProject,
     user,
-    logout
+    logout,
+    openActivityLog,
+    openExportImport,
+    openTemplatesPanel,
+    openSettingsPanel,
+    openKeyboardShortcuts,
+    openRecurringPanel,
   } = useStore();
 
   const { data: phases = [] } = usePhases();
@@ -23,11 +47,19 @@ export default function Sidebar({ onClose }) {
     { id: 'board', label: 'Board', icon: Columns3 },
     { id: 'timeline', label: 'Timeline', icon: Calendar },
     { id: 'calendar', label: 'Calendar', icon: CalendarDays },
+    { id: 'gantt', label: 'Gantt', icon: GanttChart },
   ];
 
   const personalViews = [
-    { id: 'mytasks', label: 'My Tasks', icon: User },
+    { id: 'myTasks', label: 'My Tasks', icon: User },
     { id: 'reports', label: 'Reports', icon: BarChart3 },
+  ];
+
+  const tools = [
+    { id: 'templates', label: 'Templates', icon: FileText, action: openTemplatesPanel },
+    { id: 'recurring', label: 'Recurring', icon: RefreshCw, action: openRecurringPanel },
+    { id: 'activity', label: 'Activity', icon: Activity, action: openActivityLog },
+    { id: 'export', label: 'Export/Import', icon: Download, action: openExportImport },
   ];
 
   const totalTasks = phases.reduce((sum, p) => sum + (p._count?.tasks || 0), 0);
@@ -59,7 +91,7 @@ export default function Sidebar({ onClose }) {
         <div className="flex items-center justify-between mb-3">
           <button
             onClick={handleBackToProjects}
-            className="flex items-center gap-2 text-[12px] text-[#8892a4] hover:text-white transition-colors"
+            className="flex items-center gap-2 text-[12px] text-[#8892a4] hover:text-white transition-[color]"
           >
             <ChevronLeft size={14} />
             All Projects
@@ -102,7 +134,7 @@ export default function Sidebar({ onClose }) {
             <button
               key={view.id}
               onClick={() => handleViewChange(view.id)}
-              className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-[13px] transition-all ${
+              className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-[13px] transition-[background-color,color] ${
                 currentView === view.id
                   ? 'bg-[rgba(108,140,255,0.12)] text-[#6c8cff] font-semibold'
                   : 'text-[#8892a4] hover:bg-[#1a2035] hover:text-white'
@@ -122,7 +154,7 @@ export default function Sidebar({ onClose }) {
             <button
               key={view.id}
               onClick={() => handleViewChange(view.id)}
-              className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-[13px] transition-all ${
+              className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-[13px] transition-[background-color,color] ${
                 currentView === view.id
                   ? 'bg-[rgba(108,140,255,0.12)] text-[#6c8cff] font-semibold'
                   : 'text-[#8892a4] hover:bg-[#1a2035] hover:text-white'
@@ -130,6 +162,22 @@ export default function Sidebar({ onClose }) {
             >
               <view.icon size={18} />
               {view.label}
+            </button>
+          ))}
+        </div>
+
+        <p className="text-[10px] font-bold uppercase tracking-wider text-[#556] px-2 mb-2 mt-4">
+          Tools
+        </p>
+        <div className="space-y-1">
+          {tools.map((tool) => (
+            <button
+              key={tool.id}
+              onClick={tool.action}
+              className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-[13px] text-[#8892a4] hover:bg-[#1a2035] hover:text-white transition-[background-color,color]"
+            >
+              <tool.icon size={18} />
+              {tool.label}
             </button>
           ))}
         </div>
@@ -143,7 +191,7 @@ export default function Sidebar({ onClose }) {
         <div className="space-y-1">
           <button
             onClick={() => handlePhaseChange('all')}
-            className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-[13px] transition-all ${
+            className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-[13px] transition-[background-color,color] ${
               currentPhaseFilter === 'all'
                 ? 'bg-[rgba(108,140,255,0.12)] text-[#6c8cff] font-semibold'
                 : 'text-[#8892a4] hover:bg-[#1a2035] hover:text-white'
@@ -160,7 +208,7 @@ export default function Sidebar({ onClose }) {
             <button
               key={phase.id}
               onClick={() => handlePhaseChange(phase.id)}
-              className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-[13px] transition-all ${
+              className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-[13px] transition-[background-color,color] ${
                 currentPhaseFilter === phase.id
                   ? 'bg-[rgba(108,140,255,0.12)] text-[#6c8cff] font-semibold'
                   : 'text-[#8892a4] hover:bg-[#1a2035] hover:text-white'
@@ -222,13 +270,32 @@ export default function Sidebar({ onClose }) {
               {user?.role === 'ADMIN' ? 'Administrator' : 'Member'}
             </p>
           </div>
-          <button
-            onClick={handleLogout}
-            className="w-8 h-8 rounded-lg bg-[#1a2035] text-[#8892a4] hover:text-[#ef4444] hover:bg-[#ef4444]/10 flex items-center justify-center transition-all shrink-0"
-            title="Logout"
-          >
-            <LogOut size={16} />
-          </button>
+          <div className="flex items-center gap-1 shrink-0">
+            <button
+              onClick={openKeyboardShortcuts}
+              aria-label="Keyboard shortcuts"
+              className="w-8 h-8 rounded-lg bg-[#1a2035] text-[#8892a4] hover:text-white hover:bg-[#253050] flex items-center justify-center transition-[background-color,color]"
+              title="Keyboard shortcuts (?)"
+            >
+              <Keyboard size={16} />
+            </button>
+            <button
+              onClick={openSettingsPanel}
+              aria-label="Settings"
+              className="w-8 h-8 rounded-lg bg-[#1a2035] text-[#8892a4] hover:text-white hover:bg-[#253050] flex items-center justify-center transition-[background-color,color]"
+              title="Settings"
+            >
+              <Settings size={16} />
+            </button>
+            <button
+              onClick={handleLogout}
+              aria-label="Logout"
+              className="w-8 h-8 rounded-lg bg-[#1a2035] text-[#8892a4] hover:text-[#ef4444] hover:bg-[#ef4444]/10 flex items-center justify-center transition-[background-color,color] shrink-0"
+              title="Logout"
+            >
+              <LogOut size={16} />
+            </button>
+          </div>
         </div>
       </div>
     </aside>

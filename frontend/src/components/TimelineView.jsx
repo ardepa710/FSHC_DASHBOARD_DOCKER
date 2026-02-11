@@ -56,7 +56,8 @@ export default function TimelineView() {
             <button
               key={phase.id}
               onClick={() => setPhaseFilter(phase.id)}
-              className="w-full bg-[#111827] border border-[#1e2640] rounded-xl p-4 text-left hover:border-[#6c8cff] transition-colors"
+              aria-label={`View ${phase.name} phase, ${phase.progress}% complete`}
+              className="w-full bg-[#111827] border border-[#1e2640] rounded-xl p-4 text-left hover:border-[#6c8cff] transition-[border-color] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#6c8cff] focus-visible:ring-inset"
             >
               <div className="flex items-center gap-3 mb-3">
                 <span className="text-xl">{phase.icon}</span>
@@ -70,9 +71,9 @@ export default function TimelineView() {
                   {phase.progress}%
                 </span>
               </div>
-              <div className="h-2 bg-[#253050] rounded-full overflow-hidden">
+              <div className="h-2 bg-[#253050] rounded-full overflow-hidden" aria-hidden="true">
                 <div
-                  className="h-full rounded-full transition-all"
+                  className="h-full rounded-full transition-[width]"
                   style={{
                     width: `${phase.progress}%`,
                     background: phase.color,
@@ -137,7 +138,8 @@ export default function TimelineView() {
                   {/* Bar */}
                   <button
                     onClick={() => setPhaseFilter(phase.id)}
-                    className="h-9 rounded-lg relative flex items-center px-4 text-[11px] font-semibold text-white cursor-pointer transition-all hover:brightness-125 hover:scale-y-110"
+                    aria-label={`View ${phase.name} phase, ${phase.progress}% complete, ${phase.done} of ${phase.total} tasks done`}
+                    className="h-9 rounded-lg relative flex items-center px-4 text-[11px] font-semibold text-white cursor-pointer transition-[filter,transform] hover:brightness-125 hover:scale-y-110 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#6c8cff]"
                     style={{
                       marginLeft: `${left}%`,
                       width: `${width}%`,

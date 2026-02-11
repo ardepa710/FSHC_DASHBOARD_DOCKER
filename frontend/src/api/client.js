@@ -193,4 +193,23 @@ export const getMyTasks = () => client.get('/reports/my-tasks');
 export const getBurndown = (projectId, days) => client.get(`/reports/project/${projectId}/burndown`, { params: { days } });
 export const getTagAnalytics = (projectId) => client.get(`/reports/project/${projectId}/tags`);
 
+// ============ EXPORT/IMPORT ============
+export const exportTasksJson = (params) => client.get('/export/tasks/json', { params });
+export const exportTasksCsv = (params) => client.get('/export/tasks/csv', { params, responseType: 'blob' });
+export const importTasks = (data) => client.post('/export/tasks/import', data);
+
+// ============ FILTER PRESETS ============
+export const getFilterPresets = (projectId) => client.get(`/filter-presets/project/${projectId}`);
+export const createFilterPreset = (data) => client.post('/filter-presets', data);
+export const updateFilterPreset = (id, data) => client.put(`/filter-presets/${id}`, data);
+export const deleteFilterPreset = (id) => client.delete(`/filter-presets/${id}`);
+export const setDefaultFilterPreset = (id) => client.patch(`/filter-presets/${id}/default`);
+
+// ============ USER SETTINGS ============
+export const getUserSettings = () => client.get('/settings');
+export const updateUserSettings = (data) => client.put('/settings', data);
+export const updateTheme = (theme) => client.patch('/settings/theme', { theme });
+export const toggleKeyboardShortcuts = () => client.patch('/settings/keyboard-shortcuts');
+export const updateEmailSettings = (data) => client.patch('/settings/email-notifications', data);
+
 export default client;
