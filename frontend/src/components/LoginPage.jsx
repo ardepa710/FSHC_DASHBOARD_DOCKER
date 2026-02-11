@@ -32,8 +32,8 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen bg-[#0a0f1c] flex items-center justify-center p-4">
-      <div className="w-full max-w-md">
+    <div className="flex-1 h-full bg-[#0a0f1c] flex items-center justify-center p-4">
+      <div className="w-full max-w-md -mt-16">
         {/* Logo/Header */}
         <div className="text-center mb-6 sm:mb-8">
           <div className="w-14 h-14 sm:w-16 sm:h-16 bg-gradient-to-br from-[#6c8cff] to-[#8b5cf6] rounded-2xl flex items-center justify-center mx-auto mb-3 sm:mb-4">
