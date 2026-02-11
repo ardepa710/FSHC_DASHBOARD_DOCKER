@@ -288,7 +288,7 @@ fshc_dashboard/
 |---------|-------|------|-------------|
 | db | postgres:15-alpine | 5432 (internal) | PostgreSQL database |
 | backend | custom | 3001 (internal) | Express API + WebSocket |
-| frontend | custom (nginx) | 80 (external) | Static files + reverse proxy |
+| frontend | custom (nginx) | 8002 (external) | Static files + reverse proxy |
 
 ### Quick Deploy
 ```bash
@@ -303,7 +303,7 @@ nano .env  # Change passwords and JWT_SECRET
 # Build and start
 docker-compose up -d --build
 
-# Access at http://localhost:80
+# Access at http://localhost:8002
 ```
 
 ### Environment Variables (.env)
@@ -317,7 +317,7 @@ POSTGRES_DB=fshc_dashboard
 JWT_SECRET=your-super-secret-jwt-key
 
 # External port
-APP_PORT=80
+APP_PORT=8002
 ```
 
 ### Nginx Proxy Routes
