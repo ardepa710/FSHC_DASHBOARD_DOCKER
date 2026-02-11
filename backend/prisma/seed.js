@@ -3,30 +3,62 @@ const bcrypt = require('bcryptjs');
 const prisma = new PrismaClient();
 
 async function main() {
-  // Clear existing data
-  await prisma.note.deleteMany();
-  await prisma.deliverable.deleteMany();
-  await prisma.subtask.deleteMany();
-  await prisma.task.deleteMany();
-  await prisma.phase.deleteMany();
-  await prisma.assignee.deleteMany();
-  await prisma.userProject.deleteMany();
-  await prisma.project.deleteMany();
-  await prisma.user.deleteMany();
-
-  // Create Admin User (from environment variables or defaults)
+  // Get admin credentials from environment variables
   const adminUsername = process.env.ADMIN_USER || 'admin';
   const adminPassword = process.env.ADMIN_PASSWORD || '7237';
   const hashedPassword = await bcrypt.hash(adminPassword, 10);
-  const adminUser = await prisma.user.create({
-    data: {
-      username: adminUsername,
-      password: hashedPassword,
-      name: 'Administrator',
-      email: 'admin@fshc.com',
-      role: 'ADMIN',
-    }
+
+  console.log(`Setting up admin user: ${adminUsername}`);
+
+  // Check if admin user exists
+  const existingAdmin = await prisma.user.findFirst({
+    where: { role: 'ADMIN' }
   });
+
+  if (existingAdmin) {
+    // Update existing admin with new credentials
+    await prisma.user.update({
+      where: { id: existingAdmin.id },
+      data: {
+        username: adminUsername,
+        password: hashedPassword,
+      }
+    });
+    console.log(`Admin user updated: username=${adminUsername}`);
+
+    // Check if we have sample data already
+    const projectCount = await prisma.project.count();
+    if (projectCount > 0) {
+      console.log('Sample data already exists. Skipping seed data creation.');
+      return;
+    }
+  }
+
+  // If no admin exists, create one
+  let adminUser;
+  if (!existingAdmin) {
+    adminUser = await prisma.user.create({
+      data: {
+        username: adminUsername,
+        password: hashedPassword,
+        name: 'Administrator',
+        email: 'admin@fshc.com',
+        role: 'ADMIN',
+      }
+    });
+    console.log(`Admin user created: username=${adminUsername}`);
+  } else {
+    adminUser = existingAdmin;
+  }
+
+  // Check if we need to create sample data
+  const projectCount = await prisma.project.count();
+  if (projectCount > 0) {
+    console.log('Sample data already exists. Skipping seed data creation.');
+    return;
+  }
+
+  console.log('Creating sample data...');
 
   // Create sample regular users
   const user1 = await prisma.user.create({
@@ -410,12 +442,11 @@ async function main() {
   });
 
   console.log('Seed completed successfully!');
-  console.log(`Admin user created: username=${adminUsername}, password=${adminPassword}`);
 }
 
 main()
   .catch((e) => {
-    console.error(e);
+    console.error('Seed error:', e);
     process.exit(1);
   })
   .finally(async () => {
